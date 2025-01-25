@@ -11,7 +11,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
   
   const gradesPage = await makeGetRequest(token);
   const gradesData = extractGradesData(gradesPage, username);
-  console.log(gradesData)
+
 
   
 }
@@ -20,7 +20,7 @@ async function startBackgroundProcessTest() {
 
   const localTest = fs.readFileSync(localPageTest, "utf-8");
   const gradesData = extractGradesData(localTest, username);
-  console.log(gradesData);
+
 }
 
 async function stopBackgroundProcess(username) { 
