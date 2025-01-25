@@ -3,23 +3,167 @@ const path = require("path");
 const axios = require("axios");
 const { sendSMS } = require("./sendSMS");
 const { extractGradesData } = require("./extractGradesData");
+const { log } = require("console");
 
 const usersList = {};
 const localPageTest = path.join(__dirname, "../data/debug_html_output.html");
 async function startBackgroundProcess(username, phoneNumber, token) {
   if (usersList[username]) return false;
-  
-  const gradesPage = await makeGetRequest(token);
-  const gradesData = extractGradesData(gradesPage, username);
+   try {
+    
+     const gradesPage = await makeGetRequest(token);
+     const initialGradesData = await extractGradesData(gradesPage, username);
 
+     usersList[username] = {
+       phoneNumber,
+       token,
+       lastGradesData: initialGradesData,
+       interval: null,
+     };
+     const checkForUpdates = async () => {
+       try {
+         console.log(`Checking for updates for ${username}...`);
+         const gradesPage = await makeGetRequest(token);
+         const newGradesData = await extractGradesData(gradesPage, username);
+
+         const lastGradesData = usersList[username].lastGradesData;
+
+         
+         const newGrades = newGradesData.newGrades.filter((grade) => {
+           return !lastGradesData.lastKnownGrades.some(
+             (g) => g.courseCode === grade.courseCode && g.grade === grade.grade
+           );
+         });
+
+         if (newGrades.length > 0) {
+           console.log(`New grades found for ${username}:`, newGrades);
+
+           
+           await sendSMS(phoneNumber, newGrades);
+           console.log(`SMS notification sent to ${phoneNumber}`);
+
+          
+           usersList[username].lastGradesData.lastKnownGrades =
+             newGradesData.lastKnownGrades;
+         }
+
+        
+         if (newGradesData.pendingCourses.length === 0) {
+           console.log(`All grades have been revealed for ${username}`);
+
+          
+           await sendSMS(phoneNumber, [
+             { message: "All your grades have been revealed!" },
+           ]);
+
+          
+           clearInterval(usersList[username].interval);
+           delete usersList[username];
+           console.log(`Background process stopped for ${username}`);
+         }
+       } catch (error) {
+         console.error(
+           `Error checking updates for ${username}:`,
+           error.message
+         );
+       }
+     };
+
+    
+     const interval = setInterval(checkForUpdates, 5 * 60 * 1000);
+     usersList[username].interval = interval;
+
+    
+     return true;
+   } catch (error) {
+     console.error(
+       `Error starting background process for ${username}:`,
+       error.message
+     );
+     return false;
+   }
 
   
 }
 async function startBackgroundProcessTest() {
   const username = "test";
+  const phoneNumber = process.env.TEST_PHONE_NUMBER;
 
-  const localTest = fs.readFileSync(localPageTest, "utf-8");
+  try {
+    const localTest = fs.readFileSync(localPageTest, "utf-8");
   const gradesData = extractGradesData(localTest, username);
+  log(gradesData)
+   usersList[username] = {
+       phoneNumber,
+       lastGradesData: gradesData,
+       interval: null,
+     };
+     const checkForUpdates = async () => {
+       try {
+         console.log(`Checking for updates for ${username}...`);
+         const localTest = fs.readFileSync(localPageTest, "utf-8");
+         const newGradesData = await extractGradesData(localTest, username);
+
+         const lastGradesData = usersList[username].lastGradesData;
+
+          if (!Array.isArray(lastGradesData.lastKnownGrades)) {
+            console.warn(`lastKnownGrades is undefined for user ${username}`);
+            lastGradesData.lastKnownGrades = [];
+          }
+         const newGrades = newGradesData.newGrades.filter((grade) => {
+           return !lastGradesData.lastKnownGrades.some(
+             (g) => g.courseCode === grade.courseCode && g.grade === grade.grade
+           );
+         });
+
+         if (newGrades.length > 0) {
+           console.log(`New grades found for ${username}:`, newGrades);
+
+           
+           await sendSMS(phoneNumber, newGrades);
+           console.log(`SMS notification sent to ${phoneNumber}`);
+
+          
+           usersList[username].lastGradesData.lastKnownGrades =
+             newGradesData.lastKnownGrades;
+         }
+
+        
+         if (newGradesData.pendingCourses.length === 0) {
+           console.log(`All grades have been revealed for ${username}`);
+
+          
+           await sendSMS(phoneNumber, [
+             { message: "All your grades have been revealed!" },
+           ]);
+
+          
+           stopBackgroundProcess(username)
+           console.log(`Background process stopped for ${username}`);
+         }
+       } catch (error) {
+         console.error(
+           `Error checking updates for ${username}:`,
+           error.message
+         );
+       }
+     };
+
+    
+     const interval = setInterval(checkForUpdates, 25 * 1000);
+     usersList[username].interval = interval;
+     console.log(usersList)
+    
+     return true;
+   } catch (error) {
+     console.error(
+       `Error starting background process for ${username}:`,
+       error.message
+     );
+     return false;
+   }
+  
+
 
 }
 

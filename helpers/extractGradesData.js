@@ -61,15 +61,11 @@ async function extractGradesData(HTMLPageAsString, username) {
 
     if (numberOfTables === 0) console.warn("No grade tables found in the HTML content.");
 
-   // const lastTableIndex = numberOfTables - 1;
-
-    for (let lastTableIndex = 0; lastTableIndex < numberOfTables; lastTableIndex++)
-    {
-      const gridViewId = `${labelPrefix}_GridView1_${lastTableIndex}`;
-    const semesterNameLabelId = `${labelPrefix}_SemesterNameLabel_${lastTableIndex}`; // semster name
-    const formViewId = `${labelPrefix}_FormView1_${lastTableIndex}`; // final CGPA of the table
-    
-
+    const lastTableIndex = numberOfTables - 1;
+    const gridViewId = `${labelPrefix}_GridView1_${lastTableIndex}`;
+    const formViewId = `${labelPrefix}_FormView1_${lastTableIndex}_CGPALabel`;
+    const CGPA = $(`#${formViewId}`).text().trim();
+    log(CGPA);
     const tableElement = $(`#${gridViewId}`);
     if (tableElement.length === 0) console.warn(`Table with id '${gridViewId}' not found.`);
     const records = processTableElement(tableElement);
@@ -77,14 +73,17 @@ async function extractGradesData(HTMLPageAsString, username) {
     for (const record of records) {
       const parsedRow = parseRecord(record, resultsProcessor);
       if (parsedRow) {
+        
         parsedRow.grade === 'P' ? pendingCourses.push(parsedRow) : revealedGrades.push(parsedRow);
       }
-    }}
+    }
     
 
     const sessions = readUserSessions();
     const userSession = sessions[username] || { lastKnownGrades: [] };
-
+    if (!Array.isArray(userSession.lastKnownGrades)) {
+      userSession.lastKnownGrades = [];
+    }
     const newGrades = revealedGrades.filter((grade) => {
       return !userSession.lastKnownGrades.some(
         (g) => g.courseCode === grade.courseCode && g.grade === grade.grade
@@ -93,6 +92,7 @@ async function extractGradesData(HTMLPageAsString, username) {
 
     sessions[username] = {
       lastKnownGrades: revealedGrades,
+      "CGPA": CGPA,
     };
     writeUserSessions(sessions);
 
@@ -103,6 +103,7 @@ async function extractGradesData(HTMLPageAsString, username) {
     return {
       newGrades,
       pendingCourses,
+      lastKnownGrades: revealedGrades,
     };
   } catch (error) {
     console.error(`Error extracting grades: ${error.message}`);
@@ -112,10 +113,10 @@ async function extractGradesData(HTMLPageAsString, username) {
 
 function parseRecord(record, resultsProcessor) {
  const regex1 =
-   /(\d{9})\s+(.*?)\s+([A-D][+-]?|P|حذف|إستبيان|F)\s+(\d\.\d{2})\s+(\d+)\s+(\d\.\d{2})/;
+   /(\d{9})\s+(\d{5})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F)\s+(\d\.\d{2})\s+(\d+)\s+(\d+\.\d{2})/;
 
  const regex2 =
-   /(\d{9})\s+(\d{5})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F)\s+(\d\.\d{2})\s+(\d+)\s+(\d+\.\d{2})/;
+   /(\d{9})\s+((?:\S+\s*){1,3})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F)\s+(\d\.\d{2})\s+(\d+)\s+(\d\.\d{2})/;
   let match = record.match(regex1);
   if (match) {
     try {

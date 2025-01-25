@@ -2,5 +2,5 @@
 /node_modules
 b.js
 userSessions.json
-/data/debug_html_output.html
+/data
 /.cph
