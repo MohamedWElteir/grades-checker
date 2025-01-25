@@ -1,4 +1,5 @@
 const express = require("express");
+const exec = require("child_process").exec;
 const app = express();
 const dotenv = require("dotenv");
 dotenv.config();
@@ -46,6 +47,16 @@ app.get("/test", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`http://localhost:${PORT}`);
+  console.log(`http://localhost:${PORT}`);
+
+
+ exec("curl -X GET http://localhost:3000/test", (err, stdout, stderr) => {
+    if (err) {
+      console.error(`exec error: ${err}`);
+      return;
+    }
+  });
+
+
 });
 

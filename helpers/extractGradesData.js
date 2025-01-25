@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const dotenv = require("dotenv");
 const cheerio = require("cheerio");
+const { log } = require("console");
 
 dotenv.config();
 
@@ -60,39 +61,25 @@ async function extractGradesData(HTMLPageAsString, username) {
 
     if (numberOfTables === 0) console.warn("No grade tables found in the HTML content.");
 
-    const lastTableIndex = numberOfTables - 1;
+   // const lastTableIndex = numberOfTables - 1;
 
-    const gridViewId = `${labelPrefix}_GridView1_${lastTableIndex}`;
+    for (let lastTableIndex = 0; lastTableIndex < numberOfTables; lastTableIndex++)
+    {
+      const gridViewId = `${labelPrefix}_GridView1_${lastTableIndex}`;
     const semesterNameLabelId = `${labelPrefix}_SemesterNameLabel_${lastTableIndex}`; // semster name
     const formViewId = `${labelPrefix}_FormView1_${lastTableIndex}`; // final CGPA of the table
     
 
     const tableElement = $(`#${gridViewId}`);
     if (tableElement.length === 0) console.warn(`Table with id '${gridViewId}' not found.`);
-    const collected = tableElement
-      .text()
-      .split("\n")
-      .map((line) => line.trim())
-      .filter((line) => line)
-      .reduce((acc, line) => {
-        if (/^\d{9}/.test(line) || /^\d{9}/.test(line.replace(/\s+/g, " "))) {
-          acc.push(line);
-        } else if (acc.length > 0) {
-          acc[acc.length - 1] += " " + line;
-        }
-        return acc;
-      }, [])
-      .map((record) => record.replace(/\s+/g, " ").trim());
-
-     console.log(collected);
-    for (let i = 0; i < collected.length; i++) {
-      const record = collected[i];
-      console.log(record);
+    const records = processTableElement(tableElement);
+    log(records);
+    for (const record of records) {
       const parsedRow = parseRecord(record, resultsProcessor);
       if (parsedRow) {
-         (parsedRow.grade === "P") ? pendingCourses.push(parsedRow): revealedGrades.push(parsedRow);
-        }
+        parsedRow.grade === 'P' ? pendingCourses.push(parsedRow) : revealedGrades.push(parsedRow);
       }
+    }}
     
 
     const sessions = readUserSessions();
@@ -124,12 +111,11 @@ async function extractGradesData(HTMLPageAsString, username) {
 }
 
 function parseRecord(record, resultsProcessor) {
-  const regex1 =
-    /(^\d{9})([\u0600-\u06FF\s]+?)(?=\s*[^\s\d\u0600-\u06FF])\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F)(\d\.\d{2})(\d)(\d\.\d{2})/;
+ const regex1 =
+   /(\d{9})\s+(.*?)\s+([A-D][+-]?|P|حذف|إستبيان|F)\s+(\d\.\d{2})\s+(\d+)\s+(\d\.\d{2})/;
 
-  const regex2 =
-    /(\d{9})\s+(\d{5})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F)(\d\.\d{2})(\d)(\d\.\d{2})/;
-
+ const regex2 =
+   /(\d{9})\s+(\d{5})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F)\s+(\d\.\d{2})\s+(\d+)\s+(\d+\.\d{2})/;
   let match = record.match(regex1);
   if (match) {
     try {
@@ -192,6 +178,43 @@ function parseRecord(record, resultsProcessor) {
     }
   }
   return null;
+}
+
+function processTableElement(tableElement) {
+  const lines = tableElement
+    .text()
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line && !line.includes("رقم المقرر"));
+
+  const records = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    let recordLines = [];
+    let line = lines[i];
+
+    if (/^\d{9}/.test(line)) {
+      recordLines.push(line);
+      i++;
+
+      while (i < lines.length && !/^\d{9}/.test(lines[i])) recordLines.push(lines[i++]);
+      let record = recordLines.join(" ").trim();
+      record = record.replace(/(\d{9})(\d{5}|\D+)/, "$1 $2");
+
+      record = record.replace(
+        /([A-D][+-]?|P|حذف|إستبيان|F)(\d\.\d{2})(\d+)(\d+\.\d{2})/,
+        "$1 $2 $3 $4"
+      );
+      record = record.replace(/\s+/g, " ").trim();
+
+      records.push(record);
+    } else {
+      i++;
+    }
+  }
+
+  return records;
 }
 
 module.exports = {
