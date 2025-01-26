@@ -95,7 +95,7 @@ async function extractGradesData(HTMLPageAsString, username) {
       lastKnownGrades: revealedGrades,
       "CGPA": CGPA,
     };
-    writeUserSessions(sessions);
+    await writeUserSessions(sessions);
 
     console.log(
       `Matched: ${resultsProcessor.matchedCount}, Unmatched: ${resultsProcessor.unmatchedCount}`
