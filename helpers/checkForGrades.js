@@ -188,15 +188,6 @@ async function stopBackgroundProcess(username) {
 
 
 
-function formatGradeInfo(grade) {
-  return {
-    course: grade.courseName,
-    code: grade.courseCode,
-    grade: grade.grade,
-    timestamp: new Date().toISOString(),
-  };
-}
-
 async function makeGetRequest(token){
   try {
     const url = `https://www.scialex.org/F/${token}/2018/Student/Results.aspx`;
