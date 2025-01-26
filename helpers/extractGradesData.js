@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("fs").promises;
 const path = require("path");
 const dotenv = require("dotenv");
 const cheerio = require("cheerio");
@@ -8,11 +8,13 @@ dotenv.config();
 
 const userSessionsPath = path.join(__dirname, "../data/userSessions.json");
 
-function readUserSessions() {
-  if (!fs.existsSync(userSessionsPath)) {
-    fs.writeFileSync(userSessionsPath, JSON.stringify({}), "utf-8");
-  }
-  let data = fs.readFileSync(userSessionsPath, "utf-8");
+async function readUserSessions() {
+   try {
+     await fs.access(userSessionsPath);
+   } catch (error) {
+     await fs.writeFile(userSessionsPath, JSON.stringify({}), "utf-8");
+   }
+  let data = await fs.readFile(userSessionsPath, "utf-8");
 
   if (data.trim() === "") data = "{}";
 
@@ -21,13 +23,13 @@ function readUserSessions() {
   } catch (error) {
     console.error("Error parsing user sessions JSON:", error.message);
     
-    fs.writeFileSync(userSessionsPath, JSON.stringify({}), "utf-8");
+   await fs.writeFile(userSessionsPath, JSON.stringify({}), "utf-8");
     return {};
   }
 }
 
-function writeUserSessions(sessions) {
-  fs.writeFileSync(
+async function writeUserSessions(sessions) {
+ await fs.writeFile(
     userSessionsPath,
     JSON.stringify(sessions, null, 2),
     "utf-8"
