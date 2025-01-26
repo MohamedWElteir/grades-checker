@@ -219,5 +219,4 @@ module.exports = {
   startBackgroundProcess,
   startBackgroundProcessTest,
   stopBackgroundProcess,
-  makeGetRequest,
 };

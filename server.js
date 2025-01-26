@@ -9,7 +9,6 @@ const {
   startBackgroundProcess,
   startBackgroundProcessTest,
   stopBackgroundProcess,
-  makeGetRequest,
 } = require("./helpers/checkForGrades");
 
 app.use(express.json());
