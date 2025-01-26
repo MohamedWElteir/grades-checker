@@ -5,9 +5,9 @@ const twilioClient = twilio(
   process.env.TWILIO_AUTH_TOKEN
 );
 
-async function sendSMS(to, grades) {
+async function sendSMS(to, grades, CGPA) {
   const messageBody = grades
-    .map((grade) => `Course: ${grade.courseName}, Grade: ${grade.grade}`)
+    .map((grade) => `Course: ${grade.courseName}, Grade: ${grade.grade}, CGPA: ${CGPA}`)
     .join("\n");
 
   try {

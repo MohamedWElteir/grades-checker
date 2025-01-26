@@ -24,12 +24,12 @@ async function startBackgroundProcess(username, phoneNumber, token) {
        try {
          console.log(`Checking for updates for ${username}...`);
          const gradesPage = await makeGetRequest(token);
-         const newGradesData = await extractGradesData(gradesPage, username);
+         const extractedGradesData = await extractGradesData(gradesPage, username);
 
          const lastGradesData = usersList[username].lastGradesData;
 
          
-         const newGrades = newGradesData.newGrades.filter((grade) => {
+         const newGrades = extractedGradesData.newGrades.filter((grade) => {
            return !lastGradesData.lastKnownGrades.some(
              (g) => g.courseCode === grade.courseCode && g.grade === grade.grade
            );
@@ -44,11 +44,11 @@ async function startBackgroundProcess(username, phoneNumber, token) {
 
           
            usersList[username].lastGradesData.lastKnownGrades =
-             newGradesData.lastKnownGrades;
+             extractedGradesData.lastKnownGrades;
          }
 
         
-         if (newGradesData.pendingCourses.length === 0) {
+         if (extractedGradesData.pendingCourses.length === 0) {
            console.log(`All grades have been revealed for ${username}`);
 
           
@@ -102,7 +102,7 @@ async function startBackgroundProcessTest() {
        try {
          console.log(`Checking for updates for ${username}...`);
          const localTest = fs.readFileSync(localPageTest, "utf-8");
-         const newGradesData = await extractGradesData(localTest, username);
+         const extractedGradesData = await extractGradesData(localTest, username);
 
          const lastGradesData = usersList[username].lastGradesData;
 
@@ -110,7 +110,7 @@ async function startBackgroundProcessTest() {
             console.warn(`lastKnownGrades is undefined for user ${username}`);
             lastGradesData.lastKnownGrades = [];
           }
-         const newGrades = newGradesData.newGrades.filter((grade) => {
+         const newGrades = extractedGradesData.newGrades.filter((grade) => {
            return !lastGradesData.lastKnownGrades.some(
              (g) => g.courseCode === grade.courseCode && g.grade === grade.grade
            );
@@ -118,24 +118,24 @@ async function startBackgroundProcessTest() {
 
          if (newGrades.length > 0) {
            console.log(`New grades found for ${username}:`, newGrades);
-
+          const CGPA = extractedGradesData.CGPA;
            
-           await sendSMS(phoneNumber, newGrades);
+           await sendSMS(phoneNumber, newGrades, CGPA);
            console.log(`SMS notification sent to ${phoneNumber}`);
 
           
            usersList[username].lastGradesData.lastKnownGrades =
-             newGradesData.lastKnownGrades;
+             extractedGradesData.lastKnownGrades;
          }
 
         
-         if (newGradesData.pendingCourses.length === 0) {
+         if (extractedGradesData.pendingCourses.length === 0) {
            console.log(`All grades have been revealed for ${username}`);
 
           
            await sendSMS(phoneNumber, [
              { message: "All your grades have been revealed!" },
-           ]);
+           ], CGPA);
 
           
            stopBackgroundProcess(username)
@@ -150,7 +150,7 @@ async function startBackgroundProcessTest() {
      };
 
     
-     const interval = setInterval(checkForUpdates, 25 * 1000);
+     const interval = setInterval(checkForUpdates, 15 * 1000);
      usersList[username].interval = interval;
      console.log(usersList)
     

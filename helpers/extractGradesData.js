@@ -65,7 +65,6 @@ async function extractGradesData(HTMLPageAsString, username) {
     const gridViewId = `${labelPrefix}_GridView1_${lastTableIndex}`;
     const formViewId = `${labelPrefix}_FormView1_${lastTableIndex}_CGPALabel`;
     const CGPA = $(`#${formViewId}`).text().trim();
-    log(CGPA);
     const tableElement = $(`#${gridViewId}`);
     if (tableElement.length === 0) console.warn(`Table with id '${gridViewId}' not found.`);
     const records = processTableElement(tableElement);
@@ -104,6 +103,7 @@ async function extractGradesData(HTMLPageAsString, username) {
       newGrades,
       pendingCourses,
       lastKnownGrades: revealedGrades,
+      CGPA,
     };
   } catch (error) {
     console.error(`Error extracting grades: ${error.message}`);
