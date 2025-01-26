@@ -33,11 +33,8 @@ app.post("/end", async (req, res) => {
 
 
   const stopped = await stopBackgroundProcess(username);
-  if (stopped) {
-    res.json({ message: `Grade checking stopped for user: ${username}` });
-  } else {
-    res.status(404).json({ error: "No active process for this user" });
-  }
+  stopped ? res.json({ message: `Grade checking stopped for user: ${username}` }): res.status(404).json({ error: "No active process for this user" });
+  
 });
 
 app.get("/test", async (req, res) => {

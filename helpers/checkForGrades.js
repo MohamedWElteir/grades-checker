@@ -63,7 +63,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
       }
     };
 
-    const interval = setInterval(checkForUpdates, 15 * 1000);
+    const interval = setInterval(checkForUpdates, 5 * 60 * 1000);
     usersList[username].interval = interval;
     console.log(usersList);
 
