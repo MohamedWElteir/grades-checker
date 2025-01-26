@@ -6,91 +6,83 @@ const { extractGradesData } = require("./extractGradesData");
 const { log } = require("console");
 
 const usersList = {};
-const localPageTest = path.join(__dirname, "../data/debug_html_output.html");
 async function startBackgroundProcess(username, phoneNumber, token) {
   if (usersList[username]) return false;
-   try {
-    
-     const gradesPage = await makeGetRequest(token);
-     const initialGradesData = await extractGradesData(gradesPage, username);
+  try {
+    const gradesPage = await makeGetRequest(token);
+    const initialGradesData = await extractGradesData(gradesPage, username);
+    log(initialGradesData);
+    usersList[username] = {
+      phoneNumber,
+      lastGradesData: initialGradesData,
+      interval: null,
+      startTime: new Date().toISOString(),
+    };
+    const checkForUpdates = async () => {
+      try {
+        console.log(`Checking for updates for ${username}...`);
+        const newFetch = await makeGetRequest(token);
+        const extractedGradesData = await extractGradesData(newFetch, username);
 
-     usersList[username] = {
-       phoneNumber,
-       token,
-       lastGradesData: initialGradesData,
-       interval: null,
-     };
-     const checkForUpdates = async () => {
-       try {
-         console.log(`Checking for updates for ${username}...`);
-         const gradesPage = await makeGetRequest(token);
-         const extractedGradesData = await extractGradesData(gradesPage, username);
+        const lastGradesData = usersList[username].lastGradesData;
 
-         const lastGradesData = usersList[username].lastGradesData;
+        if (!Array.isArray(lastGradesData.lastKnownGrades)) {
+          console.warn(`lastKnownGrades is undefined for user ${username}`);
+          lastGradesData.lastKnownGrades = [];
+        }
+        const newGrades = extractedGradesData.newGrades.filter((grade) => {
+          return !lastGradesData.lastKnownGrades.some(
+            (g) => g.courseCode === grade.courseCode && g.grade === grade.grade
+          );
+        });
+        const CGPA = extractedGradesData.CGPA || "N/A";
+        if (newGrades.length > 0) {
+          console.log(`New grades found for ${username}:`, newGrades);
 
-         
-         const newGrades = extractedGradesData.newGrades.filter((grade) => {
-           return !lastGradesData.lastKnownGrades.some(
-             (g) => g.courseCode === grade.courseCode && g.grade === grade.grade
-           );
-         });
+          await sendSMS(phoneNumber, newGrades, CGPA);
+          console.log(`SMS notification sent to ${phoneNumber}`);
 
-         if (newGrades.length > 0) {
-           console.log(`New grades found for ${username}:`, newGrades);
+          usersList[username].lastGradesData.lastKnownGrades =
+            extractedGradesData.lastKnownGrades;
+        }
 
-           
-           await sendSMS(phoneNumber, newGrades);
-           console.log(`SMS notification sent to ${phoneNumber}`);
+        if (extractedGradesData.pendingCourses.length === 0) {
+          console.log(`All grades have been revealed for ${username}`);
 
-          
-           usersList[username].lastGradesData.lastKnownGrades =
-             extractedGradesData.lastKnownGrades;
-         }
+          await sendSMS(
+            phoneNumber,
+            [{ message: "All your grades have been revealed!" }],
+            CGPA
+          );
 
-        
-         if (extractedGradesData.pendingCourses.length === 0) {
-           console.log(`All grades have been revealed for ${username}`);
+         await stopBackgroundProcess(username);
+          console.log(`Background process stopped for ${username}`);
+        }
+      } catch (error) {
+        console.error(`Error checking updates for ${username}:`, error.message);
+      }
+    };
 
-          
-           await sendSMS(phoneNumber, [
-             { message: "All your grades have been revealed!" },
-           ]);
+    const interval = setInterval(checkForUpdates, 15 * 1000);
+    usersList[username].interval = interval;
+    console.log(usersList);
 
-          
-           clearInterval(usersList[username].interval);
-           delete usersList[username];
-           console.log(`Background process stopped for ${username}`);
-         }
-       } catch (error) {
-         console.error(
-           `Error checking updates for ${username}:`,
-           error.message
-         );
-       }
-     };
-
-    
-     const interval = setInterval(checkForUpdates, 5 * 60 * 1000);
-     usersList[username].interval = interval;
-
-    
-     return true;
-   } catch (error) {
-     console.error(
-       `Error starting background process for ${username}:`,
-       error.message
-     );
-     return false;
-   }
-
-  
+    return true;
+  } catch (error) {
+    console.error(
+      `Error starting background process for ${username}:`,
+      error.message
+    );
+    return false;
+  }
 }
+
 async function startBackgroundProcessTest() {
   const username = "test";
   const phoneNumber = process.env.TEST_PHONE_NUMBER;
-
+  const localPageTest = path.join(__dirname, "../data/debug_html_output.html");
   try {
-    const localTest = fs.readFileSync(localPageTest, "utf-8");
+  const localTest = fs.readFileSync(localPageTest, "utf-8");
   const gradesData = extractGradesData(localTest, username);
   log(gradesData)
    usersList[username] = {
@@ -171,8 +163,6 @@ async function stopBackgroundProcess(username) {
   const processInfo = usersList[username];
   if (processInfo) {
     clearInterval(processInfo.interval);
-    await processInfo.browser.close();
-
     const runtime = new Date() - new Date(processInfo.startTime);
     console.log(`Process statistics for ${username}:`, {
       runtime: `${Math.round(runtime / (1000 * 60))} minutes`,
