@@ -80,7 +80,7 @@ async function extractGradesData(HTMLPageAsString, username) {
     }
     
 
-    const sessions = readUserSessions();
+    const sessions = await readUserSessions();
     const userSession = sessions[username] || { lastKnownGrades: [] };
     if (!Array.isArray(userSession.lastKnownGrades)) {
       userSession.lastKnownGrades = [];
