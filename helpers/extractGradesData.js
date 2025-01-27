@@ -1,12 +1,12 @@
 const dotenv = require("dotenv");
-const cheerio = require("cheerio");
+
 const { log } = require("console");
 const { readUserSessions, writeUserSessions } = require("./userSessionsHandler");
 dotenv.config();
 
 
 
-async function extractGradesData(HTMLPageAsString, username) {
+async function extractGradesData($, username) {
   const pendingCourses = [];
   const revealedGrades = [];
   const resultsProcessor = {
@@ -25,7 +25,7 @@ async function extractGradesData(HTMLPageAsString, username) {
     if (!labelPrefix)
       throw new Error("LABEL is not defined in the environment variables.");
 
-    const $ = cheerio.load(HTMLPageAsString);
+    // const $ = cheerio.load(HTMLPageAsString);
 
     const tables = $(`table[id^="${labelPrefix}_GridView1_"]`);
     const numberOfTables = tables.length;

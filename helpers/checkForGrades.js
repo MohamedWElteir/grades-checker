@@ -3,6 +3,8 @@ const path = require("path");
 const axios = require("axios");
 const { sendSMS } = require("./sendSMS");
 const { extractGradesData } = require("./extractGradesData");
+const { makeGetRequest } = require("./requestsHandler");
+const { validatePage } = require("./validators");
 const { log } = require("console");
 
 const usersList = {};
@@ -11,8 +13,10 @@ const logPath = path.join(__dirname, "../data/log.txt");
 async function startBackgroundProcess(username, phoneNumber, token) {
   if (usersList[username]) return false;
   try {
-    const gradesPage = await makeGetRequest(token);
-    const initialGradesData = await extractGradesData(gradesPage, username);
+    const initialFetch = await makeGetRequest(token, 'html');
+    const valid = validatePage(initialFetch);
+    if (!valid) return false; // for now
+    const initialGradesData = await extractGradesData(initialFetch, username);
     log(initialGradesData);
     usersList[username] = {
       phoneNumber,
@@ -23,7 +27,9 @@ async function startBackgroundProcess(username, phoneNumber, token) {
     const checkForUpdates = async () => {
       try {
         console.log(`Checking for updates for ${username}...`);
-        const newFetch = await makeGetRequest(token);
+        const newFetch = await makeGetRequest(token, 'html');
+        const valid = validatePage(newFetch);
+        if (!valid) return false; // for now
         const extractedGradesData = await extractGradesData(newFetch, username);
 
         const lastGradesData = usersList[username].lastGradesData;
@@ -188,42 +194,7 @@ async function stopBackgroundProcess(username) {
 
 
 
-async function makeGetRequest(token){
-  try {
-    const url = `https://www.scialex.org/F/${token}/2018/Student/Results.aspx`;
-    console.log(`Making get request to ${url}`);
-    
-    const response = await axios({
-      method: 'get',
-      url: url,
-      headers: {
-        'Cookie': "__RequestVerificationToken=T11HaxdI7gYMtXLATw_X0khHCb12SVwGKPOMcZtNW5SVYJyDTRpwMCMUfaQ0rUov71H7O5j8Ys70gCxvObCrASO9i5Ei_F1NcnuTgaGddvE1; ASP.NET_SessionId=ze0v2j0qmbp0ft2vseubruat; cf_clearance=d3bOYzRQwuojNlBhMLDvkYh7sOQLD0SXqpeaJhYa26o-1737452615-1.2.1.1-hOOZpIeAPQ9mt9y36Tyg7hxRWYNM.1MSEKlkssx0meEbLkXH3BQnt3IfxUzXfNd31auAuVWUqYj.aN5gIa7Ba1aplXW6TWDjV2i6srKQq7KKXn2mhJQUKlUUCyfszEJGHDUhm0tkhBAleGbwyc02VWeYIDzr9xx_QNTU_0o5PFw.rnsCXO7kPyoNLkISrj7nAuBUpEIW9wHsokRlMDEyY1Z1nIbBIrnT70_8WlTW2NE61Azga2IHLIFri.rDieLwQDML3MK6qtlk3gJvhvrVgiOatOqq__V.kRz3ZSSi9gw",
-        'Accept': 'text,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-        'Host': 'www.scialex.org',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-      },
-      responseType: 'text',
-      maxRedirects: 5,
-      validateStatus: function (status) {
-        return status >= 200 && status < 500;
-      }
-    });
 
-    
-    if (response.status === 200) {
-      if (!response.data) {
-        throw new Error('Response is empty');
-      }
-      return response.data;
-    }
-  }
-  catch (error) {
-    console.error(`Failed to make get request:`, error);
-  }}
 
 module.exports = {
   startBackgroundProcess,
