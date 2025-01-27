@@ -6,6 +6,8 @@ const { extractGradesData } = require("./extractGradesData");
 const { log } = require("console");
 
 const usersList = {};
+const logPath = path.join(__dirname, "../data/log.txt");
+
 async function startBackgroundProcess(username, phoneNumber, token) {
   if (usersList[username]) return false;
   try {
@@ -44,6 +46,14 @@ async function startBackgroundProcess(username, phoneNumber, token) {
 
           usersList[username].lastGradesData.lastKnownGrades =
             extractedGradesData.lastKnownGrades;
+          
+          const logData = {
+            username,
+            newGrades,
+            CGPA,
+            timestamp: new Date().toISOString(),
+          };
+         fs.appendFile(logPath, JSON.stringify(logData) + "\n");
         }
 
         if (extractedGradesData.pendingCourses.length === 0) {

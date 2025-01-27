@@ -22,7 +22,7 @@ app.post("/start", async (req, res) => {
   }
 
   
-  const can = startBackgroundProcess(username, phoneNumber, token);
+  const can = await startBackgroundProcess(username, phoneNumber, token);
   can ? res.json({ message: `Grade checking started for user: ${username}` }) : res.status(404).json({ error: "User already has an active process" });
 });
 
