@@ -1,10 +1,11 @@
 const dotenv = require("dotenv");
+const connectDB = require("./db");
 const { readUserSessions, writeUserSessions } = require("./userSessionsHandler");
 dotenv.config();
 
 
-
 async function extractGradesData($, username) {
+  await connectDB();
   const pendingCourses = [];
   const revealedGrades = [];
   const resultsProcessor = {
