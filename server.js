@@ -49,13 +49,13 @@ app.post("/update-timeout", async (req, res) => {
   res.status(val.status).json(val.message);
 });
 
-app.get("/get-timeout", (req, res) => {
+app.get("/get-timeout", async (req, res) => {
   const { username } = req.body;
   if (!username) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  const val = getTimeout(username);
+  const val = await getTimeout(username);
   res.status(val.status).json(val.message);
 });
 
