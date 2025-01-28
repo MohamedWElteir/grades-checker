@@ -3,10 +3,8 @@ const mongoose = require("mongoose");
 let cachedConnection = null;
 
 const connectDB = async () => {
-  if (cachedConnection) {
-    console.log("Using cached MongoDB connection");
-    return cachedConnection;
-  }
+  if (cachedConnection) return cachedConnection;
+  
 
   try {
     const uri = process.env.MONGO_URI;

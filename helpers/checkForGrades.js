@@ -54,13 +54,9 @@ async function startBackgroundProcess(username, phoneNumber, token) {
         });
         const CGPA = extractedGradesData.CGPA || "N/A";
         if (newGrades.length > 0) {
-          // console.log(`New grades found for ${username}:`, newGrades);
-
           sendSMS(phoneNumber, newGrades, CGPA).catch((err) =>
             console.error("Error sending SMS notification:", err)
           );
-          // console.log(`SMS notification sent to ${phoneNumber}`);
-
           usersList[username].lastGradesData.lastKnownGrades =
             extractedGradesData.lastKnownGrades;
           usersList[username].lastGradesData.CGPA = CGPA;
@@ -68,8 +64,6 @@ async function startBackgroundProcess(username, phoneNumber, token) {
         }
 
         if (extractedGradesData.pendingCourses.length === 0) {
-          // console.log(`All grades have been revealed for ${username}`);
-
            sendSMS(
             phoneNumber,
             [{ message: "All your grades have been revealed!" }],
@@ -96,7 +90,6 @@ async function startBackgroundProcess(username, phoneNumber, token) {
 
     const timeout = setTimeout(checkForUpdates, 7 * 60 * 1000); // 7 minutes
     usersList[username].timeout = timeout;
-    // console.log(usersList);
 
     return { status: 200, message: "Grade checking started" };
   } catch (error) {
