@@ -6,7 +6,6 @@ const PORT = process.env.PORT || 3000;
 
 const {
   startBackgroundProcess,
-  startBackgroundProcessTest,
   stopBackgroundProcess,
 } = require("./helpers/checkForGrades");
 

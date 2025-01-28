@@ -22,18 +22,26 @@ async function startBackgroundProcess(username, phoneNumber, token) {
     usersList[username] = {
       phoneNumber,
       lastGradesData: initialGradesData || [],
-      interval: null,
+      timeout: null,
       startTime: new Date().toISOString(),
     };
-    await sendWhatsapp(phoneNumber, `You have successfully started the grade checking service. You will be notified when new grades are available via SMS, here is your current CGPA: *${initialGradesData.CGPA}*`);
+     sendWhatsapp(
+       phoneNumber,
+       `You have successfully started the grade checking service. You will be notified when new grades are available via SMS, here is your current CGPA: *${initialGradesData.CGPA}*`
+     ).catch((err) => console.error("Error sending WhatsApp message:", err));
     const checkForUpdates = async () => {
       try {
-        console.log(`Checking for updates for ${username}...`);
+        // console.log(`Checking for updates for ${username}...`);
         const newFetch = await makeGetRequest(token, 'html');
         const valid = await validatePage(newFetch);
         if (!valid) {
           await stopBackgroundProcess(username);
-          await sendWhatsapp(phoneNumber, "Token has expired and your session has been terminated. Reuse the service by calling the /start endpoint.");
+           sendWhatsapp(
+             phoneNumber,
+             "Token has expired and your session has been terminated. Reuse the service by calling the /start endpoint."
+           ).catch((err) =>
+             console.error("Error sending WhatsApp message:", err)
+           );
           return { status: 400, message: "Token expired." };
         }
         const extractedGradesData = await extractGradesData(newFetch, username);
@@ -48,7 +56,9 @@ async function startBackgroundProcess(username, phoneNumber, token) {
         if (newGrades.length > 0) {
           // console.log(`New grades found for ${username}:`, newGrades);
 
-          await sendSMS(phoneNumber, newGrades, CGPA);
+          sendSMS(phoneNumber, newGrades, CGPA).catch((err) =>
+            console.error("Error sending SMS notification:", err)
+          );
           // console.log(`SMS notification sent to ${phoneNumber}`);
 
           usersList[username].lastGradesData.lastKnownGrades =
@@ -60,15 +70,22 @@ async function startBackgroundProcess(username, phoneNumber, token) {
         if (extractedGradesData.pendingCourses.length === 0) {
           // console.log(`All grades have been revealed for ${username}`);
 
-          await sendSMS(
+           sendSMS(
             phoneNumber,
             [{ message: "All your grades have been revealed!" }],
             CGPA
-          );
+           ).catch((err) =>
+             console.error("Error sending SMS notification:", err)
+            );
 
         const stopped = await stopBackgroundProcess(username);
          if(stopped) {
-           await sendWhatsapp(phoneNumber, "All grades have been revealed. Grade checking has been stopped.");
+           sendWhatsapp(
+             phoneNumber,
+             "All grades have been revealed. Grade checking has been stopped."
+           ).catch((err) =>
+             console.error("Error sending WhatsApp message:", err)
+           );
            console.log(`Background process stopped for ${username}`);
          }
         }
@@ -77,8 +94,8 @@ async function startBackgroundProcess(username, phoneNumber, token) {
       }
     };
 
-    const interval = setInterval(checkForUpdates, 7 * 60 * 1000); // 7 minutes
-    usersList[username].interval = interval;
+    const timeout = setTimeout(checkForUpdates, 7 * 60 * 1000); // 7 minutes
+    usersList[username].timeout = timeout;
     // console.log(usersList);
 
     return { status: 200, message: "Grade checking started" };
@@ -96,7 +113,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
 async function stopBackgroundProcess(username) { 
   const processInfo = usersList[username];
   if (!processInfo) return false;
-    clearInterval(processInfo.interval);
+    clearInterval(processInfo.timeout);
     const runtime = new Date() - new Date(processInfo.startTime);
     console.log(`Process statistics for ${username}:`, {
       runtime: `${Math.round(runtime / (1000 * 60))} minutes`,
@@ -105,7 +122,10 @@ async function stopBackgroundProcess(username) {
     });
 
     delete usersList[username];
-    await sendWhatsapp(processInfo.phoneNumber, "Grade checking service has been stopped.");
+    sendWhatsapp(
+      processInfo.phoneNumber,
+      "Grade checking service has been stopped."
+    ).catch((err) => console.error("Error sending WhatsApp message:", err));
     return true;
   
   
