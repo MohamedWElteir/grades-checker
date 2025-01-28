@@ -1,12 +1,10 @@
 const dotenv = require("dotenv");
-const cheerio = require("cheerio");
-const { log } = require("console");
 const { readUserSessions, writeUserSessions } = require("./userSessionsHandler");
 dotenv.config();
 
 
 
-async function extractGradesData(HTMLPageAsString, username) {
+async function extractGradesData($, username) {
   const pendingCourses = [];
   const revealedGrades = [];
   const resultsProcessor = {
@@ -22,16 +20,13 @@ async function extractGradesData(HTMLPageAsString, username) {
 
   try {
     const labelPrefix = process.env.LABEL;
-    if (!labelPrefix)
-      throw new Error("LABEL is not defined in the environment variables.");
+    if (!labelPrefix) throw new Error("LABEL is not defined in the environment variables.");
 
-    const $ = cheerio.load(HTMLPageAsString);
 
     const tables = $(`table[id^="${labelPrefix}_GridView1_"]`);
     const numberOfTables = tables.length;
-    console.log(`Found ${numberOfTables} tables`);
 
-    if (numberOfTables === 0) console.warn("No grade tables found in the HTML content.");
+    if (numberOfTables === 0) console.error("No grade tables found in the HTML content.");
 
     const lastTableIndex = numberOfTables - 1;
     const gridViewId = `${labelPrefix}_GridView1_${lastTableIndex}`;
@@ -40,7 +35,6 @@ async function extractGradesData(HTMLPageAsString, username) {
     const tableElement = $(`#${gridViewId}`);
     if (tableElement.length === 0) console.warn(`Table with id '${gridViewId}' not found.`);
     const records = processTableElement(tableElement);
-    log(records);
     for (const record of records) {
       const parsedRow = parseRecord(record, resultsProcessor);
       if (parsedRow) {

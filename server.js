@@ -22,8 +22,8 @@ app.post("/start", async (req, res) => {
   }
 
   
-  const can = await startBackgroundProcess(username, phoneNumber, token);
-  can ? res.json({ message: `Grade checking started for user: ${username}` }) : res.status(404).json({ error: "User already has an active process" });
+  const val = await startBackgroundProcess(username, phoneNumber, token);
+  res.status(val.status).json(val);
 });
 
 
@@ -36,10 +36,7 @@ app.post("/end", async (req, res) => {
   
 });
 
-app.get("/test", async (req, res) => {
- const can = startBackgroundProcessTest();
-  can ? res.json({ message: `Grade checking started for user: test` }) : res.status(404).json({ error: "User already has an active process" });
-});
+
 
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`);
