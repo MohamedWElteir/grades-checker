@@ -25,7 +25,7 @@ app.post("/start", async (req, res) => {
 
   
   const val = await startBackgroundProcess(username, phoneNumber, token);
-  res.status(val.status).json(val);
+  res.status(val.status).json(val.message);
 });
 
 
@@ -46,17 +46,17 @@ app.post("/update-timeout", async (req, res) => {
   }
 
   const val = await updateTimeout(username, timeout);
-  res.status(val.status).json(val);
+  res.status(val.status).json(val.message);
 });
 
 app.get("/get-timeout", (req, res) => {
-  const { username } = req.query;
+  const { username } = req.body;
   if (!username) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
   const val = getTimeout(username);
-  res.status(val.status).json(val);
+  res.status(val.status).json(val.message);
 });
 
 app.listen(PORT, () => {
