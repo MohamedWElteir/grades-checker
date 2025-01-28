@@ -77,8 +77,11 @@ async function startBackgroundProcess(username, phoneNumber, token) {
             CGPA
           );
 
-         await stopBackgroundProcess(username);
-          console.log(`Background process stopped for ${username}`);
+        const stopped = await stopBackgroundProcess(username);
+         if(stopped) {
+           await sendWhatsapp(phoneNumber, "All grades have been revealed. Grade checking has been stopped.");
+           console.log(`Background process stopped for ${username}`);
+         }
         }
       } catch (error) {
         console.error(`Error checking updates for ${username}:`, error.message);
@@ -113,6 +116,7 @@ async function stopBackgroundProcess(username) {
     });
 
     delete usersList[username];
+    await sendWhatsapp(processInfo.phoneNumber, "Grade checking service has been stopped.");
     return true;
   }
   return false;
