@@ -5,7 +5,7 @@ const { sendSMS, sendWhatsapp } = require("./messageSenderService");
 const { extractGradesData } = require("./extractGradesData");
 const { makeGetRequest } = require("./requestsHandler");
 const { validatePage } = require("./validators");
-const { log } = require("console");
+
 
 const usersList = {};
 const logPath = path.join(__dirname, "../data/log.txt");
@@ -19,7 +19,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
       return { status: 400, message: "Invalid or expired token. Please try again." };
     }
     const initialGradesData = await extractGradesData(initialFetch, username);
-    log(initialGradesData);
+    // console.log(initialGradesData);
     usersList[username] = {
       phoneNumber,
       lastGradesData: initialGradesData,
@@ -41,7 +41,6 @@ async function startBackgroundProcess(username, phoneNumber, token) {
         const lastGradesData = usersList[username].lastGradesData;
 
         if (!Array.isArray(lastGradesData.lastKnownGrades)) {
-          console.warn(`lastKnownGrades is undefined for user ${username}`);
           lastGradesData.lastKnownGrades = [];
         }
         const newGrades = extractedGradesData.newGrades.filter((grade) => {
@@ -51,10 +50,10 @@ async function startBackgroundProcess(username, phoneNumber, token) {
         });
         const CGPA = extractedGradesData.CGPA || "N/A";
         if (newGrades.length > 0) {
-          console.log(`New grades found for ${username}:`, newGrades);
+          // console.log(`New grades found for ${username}:`, newGrades);
 
           await sendSMS(phoneNumber, newGrades, CGPA);
-          console.log(`SMS notification sent to ${phoneNumber}`);
+          // console.log(`SMS notification sent to ${phoneNumber}`);
 
           usersList[username].lastGradesData.lastKnownGrades =
             extractedGradesData.lastKnownGrades;
@@ -69,7 +68,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
         }
 
         if (extractedGradesData.pendingCourses.length === 0) {
-          console.log(`All grades have been revealed for ${username}`);
+          // console.log(`All grades have been revealed for ${username}`);
 
           await sendSMS(
             phoneNumber,
@@ -90,7 +89,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
 
     const interval = setInterval(checkForUpdates, 7 * 60 * 1000); // 7 minutes
     usersList[username].interval = interval;
-    console.log(usersList);
+    // console.log(usersList);
 
     return { status: 200, message: "Grade checking started" };
   } catch (error) {
