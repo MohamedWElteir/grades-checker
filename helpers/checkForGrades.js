@@ -1,4 +1,3 @@
-const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
 const { sendSMS, sendWhatsapp } = require("./messageSenderService");
@@ -22,7 +21,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
     // console.log(initialGradesData);
     usersList[username] = {
       phoneNumber,
-      lastGradesData: initialGradesData,
+      lastGradesData: initialGradesData || [],
       interval: null,
       startTime: new Date().toISOString(),
     };
@@ -40,9 +39,6 @@ async function startBackgroundProcess(username, phoneNumber, token) {
         const extractedGradesData = await extractGradesData(newFetch, username);
         const lastGradesData = usersList[username].lastGradesData;
 
-        if (!Array.isArray(lastGradesData.lastKnownGrades)) {
-          lastGradesData.lastKnownGrades = [];
-        }
         const newGrades = extractedGradesData.newGrades.filter((grade) => {
           return !lastGradesData.lastKnownGrades.some(
             (g) => g.courseCode === grade.courseCode && g.grade === grade.grade
@@ -57,14 +53,8 @@ async function startBackgroundProcess(username, phoneNumber, token) {
 
           usersList[username].lastGradesData.lastKnownGrades =
             extractedGradesData.lastKnownGrades;
-          
-          const logData = {
-            username,
-            newGrades,
-            CGPA,
-            timestamp: new Date().toISOString(),
-          };
-         fs.appendFile(logPath, JSON.stringify(logData) + "\n");
+          usersList[username].lastGradesData.CGPA = CGPA;
+
         }
 
         if (extractedGradesData.pendingCourses.length === 0) {
@@ -105,7 +95,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
 
 async function stopBackgroundProcess(username) { 
   const processInfo = usersList[username];
-  if (processInfo) {
+  if (!processInfo) return false;
     clearInterval(processInfo.interval);
     const runtime = new Date() - new Date(processInfo.startTime);
     console.log(`Process statistics for ${username}:`, {
@@ -117,8 +107,8 @@ async function stopBackgroundProcess(username) {
     delete usersList[username];
     await sendWhatsapp(processInfo.phoneNumber, "Grade checking service has been stopped.");
     return true;
-  }
-  return false;
+  
+  
 }
 
 
