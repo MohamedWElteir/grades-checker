@@ -1,6 +1,6 @@
 .env
 /node_modules
 b.js
-userSessions.json
+
 /data
 .cph
