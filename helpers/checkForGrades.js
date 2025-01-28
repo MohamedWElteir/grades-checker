@@ -35,7 +35,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
         const newFetch = await makeGetRequest(token, 'html');
         const valid = await validatePage(newFetch);
         if (!valid) {
-          await stopBackgroundProcess(username);
+          stopBackgroundProcess(username);
            sendWhatsapp(
              phoneNumber,
              "Token has expired and your session has been terminated. Reuse the service by calling the /start endpoint."
