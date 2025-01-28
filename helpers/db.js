@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 
-let isConnected;
+let cachedConnection = null;
+
 const connectDB = async () => {
-  if (isConnected) {
-    console.log("Using existing MongoDB connection");
-    return;
+  if (cachedConnection) {
+    console.log("Using cached MongoDB connection");
+    return cachedConnection;
   }
 
   try {
@@ -14,12 +15,12 @@ const connectDB = async () => {
     }
 
     const db = await mongoose.connect(uri);
-
-    isConnected = db.connections[0].readyState;
+    cachedConnection = db; 
     console.log("MongoDB connected successfully!");
+    return db;
   } catch (error) {
     console.error(`Error connecting to MongoDB Atlas: ${error.message}`);
-    process.exit(1);
+    throw error;
   }
 };
 
