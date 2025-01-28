@@ -125,10 +125,26 @@ async function stopBackgroundProcess(username) {
 }
 
 
+async function updateTimeout(username, timeout) {
+  const processInfo = usersList[username];
+  if (!processInfo) return { status: 404, message: "No active process for this user" };
+  clearInterval(processInfo.timeout);
+  const newTimeout = setTimeout(() => {
+    stopBackgroundProcess(username);
+  }, timeout * 60 * 1000);
+  processInfo.timeout = newTimeout;
+  return { status: 200, message: `Timeout updated to ${timeout} minutes` };
+}
 
-
+async function getTimeout(username) {
+  const processInfo = usersList[username];
+  if (!processInfo) return { status: 404, message: "No active process for this user" };
+  return { status: 200, message: `Timeout for ${username}: ${processInfo.timeout}` };
+}
 
 module.exports = {
   startBackgroundProcess,
   stopBackgroundProcess,
+  updateTimeout,
+  getTimeout,
 };
