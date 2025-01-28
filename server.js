@@ -36,10 +36,7 @@ app.post("/end", async (req, res) => {
   
 });
 
-// app.get("/test", async (req, res) => {
-//  const can = startBackgroundProcessTest();
-//   can ? res.json({ message: `Grade checking started for user: test` }) : res.status(404).json({ error: "User already has an active process" });
-// });
+
 
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`);
