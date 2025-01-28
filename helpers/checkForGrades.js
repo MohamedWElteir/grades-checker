@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
-const { sendSMS } = require("./sendSMS");
+const { sendSMS, sendWhatsapp } = require("./messageSenderService");
 const { extractGradesData } = require("./extractGradesData");
 const { makeGetRequest } = require("./requestsHandler");
 const { validatePage } = require("./validators");
@@ -11,11 +11,13 @@ const usersList = {};
 const logPath = path.join(__dirname, "../data/log.txt");
 
 async function startBackgroundProcess(username, phoneNumber, token) {
-  if (usersList[username]) return false;
+  if (usersList[username]) return { status: 400, message: "User already has an active process" };
   try {
     const initialFetch = await makeGetRequest(token, 'html');
-    const valid = validatePage(initialFetch);
-    if (!valid) return false; // for now
+    const valid = await validatePage(initialFetch);
+    if (!valid) {
+      return { status: 400, message: "Invalid or expired token. Please try again." };
+    }
     const initialGradesData = await extractGradesData(initialFetch, username);
     log(initialGradesData);
     usersList[username] = {
@@ -28,10 +30,13 @@ async function startBackgroundProcess(username, phoneNumber, token) {
       try {
         console.log(`Checking for updates for ${username}...`);
         const newFetch = await makeGetRequest(token, 'html');
-        const valid = validatePage(newFetch);
-        if (!valid) return false; // for now
+        const valid = await validatePage(newFetch);
+        if (!valid) {
+          await stopBackgroundProcess(username);
+          await sendWhatsapp(phoneNumber, "Token has expired and your session has been terminated. Reuse the service by calling the /start endpoint.");
+          return { status: 400, message: "Token expired." };
+        }
         const extractedGradesData = await extractGradesData(newFetch, username);
-
         const lastGradesData = usersList[username].lastGradesData;
 
         if (!Array.isArray(lastGradesData.lastKnownGrades)) {
@@ -83,7 +88,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
     usersList[username].interval = interval;
     console.log(usersList);
 
-    return true;
+    return { status: 200, message: "Grade checking started" };
   } catch (error) {
     console.error(
       `Error starting background process for ${username}:`,
@@ -93,87 +98,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
   }
 }
 
-async function startBackgroundProcessTest() {
-  const username = "test";
-  const phoneNumber = process.env.TEST_PHONE_NUMBER;
-  const localPageTest = path.join(__dirname, "../data/debug_html_output.html");
-  try {
-  const localTest = fs.readFileSync(localPageTest, "utf-8");
-  const gradesData = extractGradesData(localTest, username);
-  log(gradesData)
-   usersList[username] = {
-       phoneNumber,
-       lastGradesData: gradesData,
-       interval: null,
-     };
-     const checkForUpdates = async () => {
-       try {
-         console.log(`Checking for updates for ${username}...`);
-         const localTest = fs.readFileSync(localPageTest, "utf-8");
-         const extractedGradesData = await extractGradesData(localTest, username);
 
-         const lastGradesData = usersList[username].lastGradesData;
-
-          if (!Array.isArray(lastGradesData.lastKnownGrades)) {
-            console.warn(`lastKnownGrades is undefined for user ${username}`);
-            lastGradesData.lastKnownGrades = [];
-          }
-         const newGrades = extractedGradesData.newGrades.filter((grade) => {
-           return !lastGradesData.lastKnownGrades.some(
-             (g) => g.courseCode === grade.courseCode && g.grade === grade.grade
-           );
-         });
-
-         if (newGrades.length > 0) {
-           console.log(`New grades found for ${username}:`, newGrades);
-          const CGPA = extractedGradesData.CGPA;
-           
-           await sendSMS(phoneNumber, newGrades, CGPA);
-           console.log(`SMS notification sent to ${phoneNumber}`);
-
-          
-           usersList[username].lastGradesData.lastKnownGrades =
-             extractedGradesData.lastKnownGrades;
-         }
-
-        
-         if (extractedGradesData.pendingCourses.length === 0) {
-           console.log(`All grades have been revealed for ${username}`);
-
-          
-           await sendSMS(phoneNumber, [
-             { message: "All your grades have been revealed!" },
-           ], CGPA);
-
-          
-           stopBackgroundProcess(username)
-           console.log(`Background process stopped for ${username}`);
-         }
-       } catch (error) {
-         console.error(
-           `Error checking updates for ${username}:`,
-           error.message
-         );
-       }
-     };
-
-    
-     const interval = setInterval(checkForUpdates, 15 * 1000);
-     usersList[username].interval = interval;
-     console.log(usersList)
-    
-     return true;
-   } catch (error) {
-     console.error(
-       `Error starting background process for ${username}:`,
-       error.message
-     );
-     return false;
-   }
-  
-
-
-}
 
 async function stopBackgroundProcess(username) { 
   const processInfo = usersList[username];
@@ -198,6 +123,5 @@ async function stopBackgroundProcess(username) {
 
 module.exports = {
   startBackgroundProcess,
-  startBackgroundProcessTest,
   stopBackgroundProcess,
 };
