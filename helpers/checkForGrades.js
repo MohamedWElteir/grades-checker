@@ -26,7 +26,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
       interval: null,
       startTime: new Date().toISOString(),
     };
-    await sendWhatsapp(phoneNumber, `You have successfully started the grade checking service. You will be notified when new grades are available, here is your current CGPA: ${initialGradesData.CGPA}`);
+    await sendWhatsapp(phoneNumber, `You have successfully started the grade checking service. You will be notified when new grades are available via SMS, here is your current CGPA: *${initialGradesData.CGPA}*`);
     const checkForUpdates = async () => {
       try {
         console.log(`Checking for updates for ${username}...`);
@@ -85,7 +85,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
       }
     };
 
-    const interval = setInterval(checkForUpdates, 5 * 60 * 1000);
+    const interval = setInterval(checkForUpdates, 7 * 60 * 1000); // 7 minutes
     usersList[username].interval = interval;
     console.log(usersList);
 
