@@ -26,6 +26,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
       interval: null,
       startTime: new Date().toISOString(),
     };
+    await sendWhatsapp(phoneNumber, `You have successfully started the grade checking service. You will be notified when new grades are available, here is your current CGPA: ${initialGradesData.CGPA}`);
     const checkForUpdates = async () => {
       try {
         console.log(`Checking for updates for ${username}...`);

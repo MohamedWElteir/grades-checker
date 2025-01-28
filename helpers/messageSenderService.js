@@ -29,8 +29,8 @@ async function sendWhatsapp(to, messageParams) {
   try {
     const message = await twilioClient.messages.create({
       body: finalMessage,
-      from: 'whatsapp:+14155238886',
-      to: 'whatsapp:'+to,
+      from: process.env.TWILIO_WHATSAPP_PHONE_NUMBER,
+      to: "whatsapp:" + to,
     });
     console.log(`Whatsapp message sent to ${to}: ${message.sid}`);
   } catch (error) {
