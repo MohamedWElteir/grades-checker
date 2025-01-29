@@ -23,14 +23,11 @@ async function startBackgroundProcess(username, phoneNumber, token) {
     };
      sendWhatsapp(
        phoneNumber,
-       `You have successfully started the grade checking service. You will be notified when new grades are available via SMS, here is your current CGPA: *${initialGradesData.CGPA}*`
-    ).catch((err) => console.error("Error sending WhatsApp message:", err));
-    sendWhatsapp(
-      phoneNumber,
-      `Your pending courses are:\n ${initialGradesData.pendingCourses
-        .map((course) => course.courseName)
-        .join("\n")}`
-    ).catch((err) => console.error("Error sending WhatsApp message:", err));
+       `You have successfully started the grade checking service. You will be notified when new grades are available via SMS, your pending courses are:\n ${initialGradesData.pendingCourses
+         .map((course) => course.courseName)
+         .join("\n")}\n Current CGPA: *${initialGradesData.CGPA}*`
+     ).catch((err) => console.error("Error sending WhatsApp message:", err));
+ 
 
     const checkForUpdates = async () => {
       try {
