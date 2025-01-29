@@ -1,6 +1,5 @@
 const UserSession = require("../data/userSessionSchema");
 
-
 async function readUserSessions() {
   try {
     const userSessions = await UserSession.find(); 

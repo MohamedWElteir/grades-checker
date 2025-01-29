@@ -34,7 +34,7 @@ app.delete("/end", async (req, res) => {
 
 
   const stopped = await stopBackgroundProcess(username);
-  stopped ? res.json({ message: `Grade checking stopped for user: ${username}` }): res.status(404).json({ error: "No active process for this user" });
+  stopped ? res.json(`Grade checking stopped for user: ${username}`): res.status(404).json("No active process for this user");
   
 });
 

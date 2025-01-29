@@ -1,13 +1,10 @@
-const path = require("path");
-const axios = require("axios");
 const { sendSMS, sendWhatsapp } = require("./messageSenderService");
 const { extractGradesData } = require("./extractGradesData");
 const { makeGetRequest } = require("./requestsHandler");
 const { validatePage } = require("./validators");
-
+const {saveUserProcess , getUserProcess, deleteUserProcess} = require("./userListHandler");
 
 const usersList = {};
-const logPath = path.join(__dirname, "../data/log.txt");
 
 async function startBackgroundProcess(username, phoneNumber, token) {
   if (usersList[username]) return { status: 400, message: "User already has an active process" };
