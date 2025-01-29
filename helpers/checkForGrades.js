@@ -30,9 +30,9 @@ async function startBackgroundProcess(username, phoneNumber, token) {
     ).catch((err) => console.error("Error sending WhatsApp message:", err));
     sendWhatsapp(
       phoneNumber,
-      `Your pending courses are: ${initialGradesData.pendingCourses
+      `Your pending courses are:\n ${initialGradesData.pendingCourses
         .map((course) => course.courseName)
-        .join(", ")}`
+        .join("\n")}`
     ).catch((err) => console.error("Error sending WhatsApp message:", err));
 
     const checkForUpdates = async () => {
