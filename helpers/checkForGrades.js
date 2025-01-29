@@ -18,20 +18,25 @@ async function startBackgroundProcess(username, phoneNumber, token) {
       return { status: 400, message: "Invalid or expired token. Please try again." };
     }
     const initialGradesData = await extractGradesData(initialFetch, username);
-    // console.log(initialGradesData);
     usersList[username] = {
       phoneNumber,
       lastGradesData: initialGradesData || [],
-      timeout: null,
+      interval: null,
       startTime: new Date().toISOString(),
     };
      sendWhatsapp(
        phoneNumber,
        `You have successfully started the grade checking service. You will be notified when new grades are available via SMS, here is your current CGPA: *${initialGradesData.CGPA}*`
-     ).catch((err) => console.error("Error sending WhatsApp message:", err));
+    ).catch((err) => console.error("Error sending WhatsApp message:", err));
+    sendWhatsapp(
+      phoneNumber,
+      `Your pending courses are: ${initialGradesData.pendingCourses
+        .map((course) => course.courseName)
+        .join(", ")}`
+    ).catch((err) => console.error("Error sending WhatsApp message:", err));
+
     const checkForUpdates = async () => {
       try {
-        // console.log(`Checking for updates for ${username}...`);
         const newFetch = await makeGetRequest(token, 'html');
         const valid = await validatePage(newFetch);
         if (!valid) {
@@ -88,8 +93,8 @@ async function startBackgroundProcess(username, phoneNumber, token) {
       }
     };
 
-    const timeout = setTimeout(checkForUpdates, 7 * 60 * 1000); // 7 minutes
-    usersList[username].timeout = timeout;
+    const interval = setInterval(checkForUpdates, 7 * 60 * 1000); // 7 minutes
+    usersList[username].interval = interval;
 
     return { status: 200, message: "Grade checking started" };
   } catch (error) {
@@ -106,7 +111,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
 async function stopBackgroundProcess(username) { 
   const processInfo = usersList[username];
   if (!processInfo) return false;
-    clearInterval(processInfo.timeout);
+    clearInterval(processInfo.interval);
     const runtime = new Date() - new Date(processInfo.startTime);
     console.log(`Process statistics for ${username}:`, {
       runtime: `${Math.round(runtime / (1000 * 60))} minutes`,
@@ -125,26 +130,26 @@ async function stopBackgroundProcess(username) {
 }
 
 
-async function updateTimeout(username, timeout) {
+async function updateInterval(username, interval) {
   const processInfo = usersList[username];
   if (!processInfo) return { status: 404, message: "No active process for this user" };
-  clearInterval(processInfo.timeout);
-  const newTimeout = setTimeout(() => {
+  clearInterval(processInfo.interval);
+  const newInterval = setInterval(() => {
     stopBackgroundProcess(username);
-  }, timeout * 60 * 1000);
-  processInfo.timeout = newTimeout;
-  return { status: 200, message: `Timeout updated to ${timeout} minutes` };
+  }, interval * 60 * 1000);
+  processInfo.interval = newInterval;
+  return { status: 200, message: `Interval updated to ${interval} minutes` };
 }
 
-async function getTimeout(username) {
+async function getInterval(username) {
   const processInfo = usersList[username];
   if (!processInfo) return { status: 404, message: "No active process for this user" };
-  return { status: 200, message: `Timeout for ${username}: ${processInfo.timeout}` };
+  return { status: 200, message: `Interval for ${username}: ${processInfo.interval}` };
 }
 
 module.exports = {
   startBackgroundProcess,
   stopBackgroundProcess,
-  updateTimeout,
-  getTimeout,
+  updateInterval,
+  getInterval,
 };

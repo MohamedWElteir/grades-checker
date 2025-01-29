@@ -7,8 +7,8 @@ const PORT = process.env.PORT || 3000;
 const {
   startBackgroundProcess,
   stopBackgroundProcess,
-  updateTimeout,
-  getTimeout,
+  updateInterval,
+  getInterval,
 } = require("./helpers/checkForGrades");
 const { get } = require("mongoose");
 
@@ -38,24 +38,24 @@ app.post("/end", async (req, res) => {
   
 });
 
-app.post("/update-timeout", async (req, res) => {
-  const { username, timeout } = req.body;
+app.post("/update-interval", async (req, res) => {
+  const { username, interval } = req.body;
 
-  if (!username || !timeout) {
+  if (!username || !interval) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  const val = await updateTimeout(username, timeout);
+  const val = await updateInterval(username, interval);
   res.status(val.status).json(val.message);
 });
 
-app.get("/get-timeout", async (req, res) => {
-  const { username } = req.body;
+app.get("/get-interval", async (req, res) => {
+  const { username } = req.query;
   if (!username) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  const val = await getTimeout(username);
+  const val = await getInterval(username);
   res.status(val.status).json(val.message);
 });
 
