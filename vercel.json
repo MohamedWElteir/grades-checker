@@ -11,5 +11,11 @@
       "src": "/(.*)",
       "dest": "/server.js"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/check-grades",
+      "schedule": "*/8 * * * *"
+    }
   ]
 }

@@ -6,18 +6,7 @@ const {
   saveUserProcess,
   getUserProcess,
   deleteUserProcess,
-  getAllActiveProcesses,
 } = require("./userListHandler");
-const cron = require("node-cron")
-
-
-cron.schedule("*/9 * * * *", async () => { // Run every 9 minutes
-  console.log("Running grade update check...");
-  const users = await getAllActiveProcesses();
-  for (const user of users) {
-    checkForUpdates(user);
-  }
-});
 
 async function checkForUpdates(user) {
   try {
@@ -123,4 +112,5 @@ async function stopBackgroundProcess(username) {
 module.exports = {
   startBackgroundProcess,
   stopBackgroundProcess,
+  checkForUpdates,
 };
