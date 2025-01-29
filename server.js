@@ -29,7 +29,7 @@ app.post("/start", async (req, res) => {
 });
 
 
-app.post("/end", async (req, res) => {
+app.delete("/end", async (req, res) => {
   const { username } = req.body;
 
 
@@ -38,7 +38,7 @@ app.post("/end", async (req, res) => {
   
 });
 
-app.post("/update-interval", async (req, res) => {
+app.put("/update-interval", async (req, res) => {
   const { username, interval } = req.body;
 
   if (!username || !interval) {
