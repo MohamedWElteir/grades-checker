@@ -7,8 +7,6 @@ const PORT = process.env.PORT || 3000;
 const {
   startBackgroundProcess,
   stopBackgroundProcess,
-  updateInterval,
-  getInterval,
 } = require("./helpers/checkForGrades");
 
 
@@ -38,26 +36,7 @@ app.delete("/end", async (req, res) => {
   
 });
 
-app.put("/update-interval", async (req, res) => {
-  const { username, interval } = req.body;
 
-  if (!username || !interval) {
-    return res.status(400).json({ error: "Missing required fields" });
-  }
-
-  const val = await updateInterval(username, interval);
-  res.status(val.status).json(val.message);
-});
-
-app.get("/get-interval", async (req, res) => {
-  const { username } = req.query;
-  if (!username) {
-    return res.status(400).json({ error: "Missing required fields" });
-  }
-
-  const val = await getInterval(username);
-  res.status(val.status).json(val.message);
-});
 
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`);

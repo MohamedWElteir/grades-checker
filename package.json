@@ -16,6 +16,7 @@
     "express": "^4.21.2",
     "grades-checker": "file:",
     "mongoose": "^8.9.5",
+    "node-cron": "^3.0.3",
     "puppeteer": "^24.1.0",
     "twilio": "^5.4.2"
   }
