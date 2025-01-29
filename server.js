@@ -10,7 +10,7 @@ const {
   updateInterval,
   getInterval,
 } = require("./helpers/checkForGrades");
-const { get } = require("mongoose");
+
 
 app.use(express.json());
 
