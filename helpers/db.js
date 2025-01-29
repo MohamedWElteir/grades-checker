@@ -1,19 +1,24 @@
 const mongoose = require("mongoose");
 
+let cachedConnection = null;
 
-const uri = process.env.MONGO_URI;
-console.log(uri);
-async function connectDB() {
+const connectDB = async () => {
+  if (cachedConnection) return cachedConnection;
+  
+
   try {
-    await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log("Connected to MongoDB Atlas");
+    const uri = process.env.MONGO_URI;
+    if (!uri) {
+      throw new Error("MONGO_URI is not defined in environment variables.");
+    }
+
+    const db = await mongoose.connect(uri);
+    cachedConnection = db; 
+    return db;
   } catch (error) {
-    console.error("Error connecting to MongoDB Atlas:", error.message);
-    process.exit(1);
+    console.error(`Error connecting to MongoDB Atlas: ${error.message}`);
+    throw error;
   }
-}
+};
 
 module.exports = connectDB;

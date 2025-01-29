@@ -3,9 +3,9 @@ const connectDB = require("./db");
 const { readUserSessions, writeUserSessions } = require("./userSessionsHandler");
 dotenv.config();
 
+ connectDB();
 
 async function extractGradesData($, username) {
-  await connectDB();
   const pendingCourses = [];
   const revealedGrades = [];
   const resultsProcessor = {
@@ -47,20 +47,20 @@ async function extractGradesData($, username) {
 
     const sessions = await readUserSessions();
     const userSession = sessions[username] || { lastKnownGrades: [] };
-    if (!Array.isArray(userSession.lastKnownGrades)) {
-      userSession.lastKnownGrades = [];
-    }
+    
     const newGrades = revealedGrades.filter((grade) => {
       return !userSession.lastKnownGrades.some(
         (g) => g.courseCode === grade.courseCode && g.grade === grade.grade
       );
     });
 
-    sessions[username] = {
+    if (newGrades.length > 0) {
+      sessions[username] = {
       lastKnownGrades: revealedGrades,
       "CGPA": CGPA,
     };
-    await writeUserSessions(sessions);
+      writeUserSessions(sessions);
+    }
 
     console.log(
       `Matched: ${resultsProcessor.matchedCount}, Unmatched: ${resultsProcessor.unmatchedCount}`

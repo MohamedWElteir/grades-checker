@@ -8,7 +8,6 @@ async function makeGetRequest(token, type='text') {
      */
   try {
     const url = `https://www.scialex.org/F/${token}/2018/Student/Results.aspx`;
-    console.log(`Making get request to ${url}`);
 
     const response = await axios({
       method: "get",
