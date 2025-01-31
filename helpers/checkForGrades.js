@@ -109,14 +109,12 @@ async function stopBackgroundProcess(username) {
     console.log(`Process statistics for ${username}:`, info);
 
      await deleteUserProcess(username);
-    sendWhatsapp(
-      processInfo.phoneNumber,
-      `Grade checking service stopped. \ninfo: ${
-      Object.entries(info)
-        .map(([key, value]) => `*${key}*: ${value}`)
-        .join("\n")
-      }`
-    ).catch((err) => console.error("Error sending WhatsApp message:", err));
+     sendWhatsapp(
+       processInfo.phoneNumber,
+       `Grade checking service has been stopped. \Info: ${Object.entries(info)
+         .map(([key, value]) => `*${key}*: ${value}`)
+         .join("\n")}`
+     ).catch((err) => console.error("Error sending WhatsApp message:", err));
     return true;
   
   
