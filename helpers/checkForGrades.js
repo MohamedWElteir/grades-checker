@@ -25,7 +25,7 @@ async function checkForUpdates(user) {
     const valid = await validatePage(newFetch);
     if (!valid) {
       await deleteUserProcess(username);
-      sendWhatsapp(phoneNumber, "Token expired. Session terminated. Restart with */start*").catch(
+      sendWhatsapp(phoneNumber, "Token expired. Session terminated. Restart with /start").catch(
         console.error
       );
       return;

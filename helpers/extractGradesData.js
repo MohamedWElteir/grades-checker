@@ -80,10 +80,10 @@ async function extractGradesData($, username) {
 
 function parseRecord(record, resultsProcessor) {
  const regex1 =
-   /(\d{9})\s+(\d{5})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F)\s+(\d\.\d{2})\s+(\d+)\s+(\d+\.\d{2})/;
+   /(\d{9})\s+(\d{5})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F|W|I)\s+(\d\.\d{2})\s+(\d+)\s+(\d+\.\d{2})/;
 
  const regex2 =
-   /(\d{9})\s+((?:\S+\s*){1,3})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F)\s+(\d\.\d{2})\s+(\d+)\s+(\d\.\d{2})/;
+   /(\d{9})\s+((?:\S+\s*){1,3})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F|W|I)\s+(\d\.\d{2})\s+(\d+)\s+(\d\.\d{2})/;
   let match = record.match(regex1);
   if (match) {
     try {
