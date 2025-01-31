@@ -6,7 +6,17 @@ const {
   saveUserProcess,
   getUserProcess,
   deleteUserProcess,
+  getAllActiveProcesses,
 } = require("./userListHandler");
+const cron = require("node-cron");
+
+cron.schedule("*/9 * * * *", async () => { // every 9 minutes
+  console.log("Running grade update check...");
+  const users = await getAllActiveProcesses();
+  for (const user of users) {
+    checkForUpdates(user);
+  }
+});
 
 async function checkForUpdates(user) {
   try {
@@ -90,17 +100,18 @@ async function startBackgroundProcess(username, phoneNumber, token) {
 async function stopBackgroundProcess(username) { 
  const processInfo = await getUserProcess(username);
  if (!processInfo) return false;
-    const runtime = new Date() - new Date(processInfo.startTime);
-    console.log(`Process statistics for ${username}:`, {
-      runtime: `${Math.round(runtime / (1000 * 60))} minutes`,
-      startTime: processInfo.startTime,
-      endTime: new Date().toISOString(),
-    });
+  const runtime = new Date() - new Date(processInfo.startTime);
+  const info = {
+    runtime: `${Math.round(runtime / (1000 * 60))} minutes`,
+    startTime: processInfo.startTime,
+    endTime: new Date().toISOString(),
+  };
+    console.log(`Process statistics for ${username}:`, info);
 
      await deleteUserProcess(username);
     sendWhatsapp(
       processInfo.phoneNumber,
-      "Grade checking service has been stopped."
+      `Grade checking service stopped. \ninfo: ${JSON.stringify(info)}`
     ).catch((err) => console.error("Error sending WhatsApp message:", err));
     return true;
   

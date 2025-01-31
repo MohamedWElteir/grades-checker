@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
     for (const user of users) {
       await checkForUpdates(user);
     }
-    res.status(200).json({ message: "Grade check completed." });
+    res.status(200).json("Grade check completed." );
   } catch (error) {
     console.error("Error checking grades:", error.message);
     res.status(500).json({ error: error.message });
