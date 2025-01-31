@@ -1,0 +1,30 @@
+steps:
+  # 1. Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/fine-jetty-449518-i9/cloud-run-source-deploy/grades-checker:latest'  
+      - '.' 
+
+  # 2. Push to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/fine-jetty-449518-i9/cloud-run-source-deploy/grades-checker:latest' 
+
+  # 3. Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'grades-checker' 
+      - '--image=us-central1-docker.pkg.dev/fine-jetty-449518-i9/cloud-run-source-deploy/grades-checker:latest'
+      - '--region=us-central1' 
+      - '--platform=managed'
+      - '--allow-unauthenticated' 
+
+# List of images to push
+images:
+  - 'us-central1-docker.pkg.dev/fine-jetty-449518-i9/cloud-run-source-deploy/grades-checker:latest'  
