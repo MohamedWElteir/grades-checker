@@ -107,17 +107,19 @@ async function stopBackgroundProcess(username) {
   if (!processInfo) return false;
     clearInterval(processInfo.interval);
     const runtime = new Date() - new Date(processInfo.startTime);
-    console.log(`Process statistics for ${username}:`, {
-      runtime: `${Math.round(runtime / (1000 * 60))} minutes`,
-      startTime: processInfo.startTime,
-      endTime: new Date().toISOString(),
-    });
-
-    delete usersList[username];
-    sendWhatsapp(
-      processInfo.phoneNumber,
-      "Grade checking service has been stopped."
-    ).catch((err) => console.error("Error sending WhatsApp message:", err));
+   const info = {
+     runtime: `${Math.round(runtime / (1000 * 60))} minutes`,
+     startTime: processInfo.startTime,
+     endTime: new Date().toISOString(),
+  };
+  
+  delete usersList[username];
+  sendWhatsapp(processInfo.phoneNumber,
+    `Grade checking service has been stopped. \Info: ${
+    Object.entries(info)
+      .map(([key, value]) => `*${key}*: ${value}`)
+      .join("\n")
+    }`).catch((err) => console.error("Error sending WhatsApp message:", err));
     return true;
   
   
