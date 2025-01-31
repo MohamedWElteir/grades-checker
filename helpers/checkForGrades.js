@@ -91,7 +91,7 @@ async function startBackgroundProcess(username, phoneNumber, token) {
      `Error starting background process for ${username}:`,
      error.message
    );
-   return { status: 500, message: "Internal server error" };
+   return { status: 500, message: `Internal error: ${error.message}` };
  }
 }
 
