@@ -13,9 +13,8 @@ const cron = require("node-cron");
 cron.schedule("*/9 * * * *", async () => { // every 9 minutes
   console.log("Running grade update check...");
   const users = await getAllActiveProcesses();
-  for (const user of users) {
-    checkForUpdates(user);
-  }
+  for (const user of users) checkForUpdates(user);
+  
 });
 
 async function checkForUpdates(user) {
@@ -71,11 +70,12 @@ async function startBackgroundProcess(username, phoneNumber, token) {
  try {
    const initialFetch = await makeGetRequest(token, "html");
    const valid = await validatePage(initialFetch);
-   if (!valid) {
-     return { status: 400, message: "Invalid or expired token." };
-   }
+   if (!valid) return { status: 400, message: "Invalid or expired token." };
+   
    
    const initialGradesData = await extractGradesData(initialFetch, username);
+   if(initialGradesData.pendingCourses.length === 0) return { status: 400, message: "No pending courses." };
+   
    console.log("Initial grades data:", initialGradesData);
    await saveUserProcess(username, phoneNumber, initialGradesData, token);
   sendWhatsapp(
@@ -111,7 +111,7 @@ async function stopBackgroundProcess(username) {
      await deleteUserProcess(username);
      sendWhatsapp(
        processInfo.phoneNumber,
-       `Grade checking service has been stopped. \Info: ${Object.entries(info)
+       `Grade checking service has been stopped. \Info:\n ${Object.entries(info)
          .map(([key, value]) => `*${key}*: ${value}`)
          .join("\n")}`
      ).catch((err) => console.error("Error sending WhatsApp message:", err));

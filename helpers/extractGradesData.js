@@ -171,7 +171,7 @@ function processTableElement(tableElement) {
       record = record.replace(/(\d{9})(\d{5}|\D+)/, "$1 $2");
 
       record = record.replace(
-        /([A-D][+-]?|P|حذف|إستبيان|F)(\d\.\d{2})(\d+)(\d+\.\d{2})/,
+        /([A-D][+-]?|P|حذف|إستبيان|F|W|I)(\d\.\d{2})(\d+)(\d+\.\d{2})/,
         "$1 $2 $3 $4"
       );
       record = record.replace(/\s+/g, " ").trim();
