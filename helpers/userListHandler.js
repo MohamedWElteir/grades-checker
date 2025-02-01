@@ -1,4 +1,4 @@
-const UserProcess = require("../data/userSession");
+const UserProcess = require("../data/userSchema");
 
 async function saveUserProcess(username, phoneNumber, lastGradesData, token) {
   await UserProcess.findOneAndUpdate(

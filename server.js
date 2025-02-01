@@ -36,6 +36,6 @@ app.delete("/end", async (req, res) => {
 
 
 app.listen(PORT, () => {
-  console.log(`http://localhost:${PORT}`);
+  console.log(`Listening on port: ${PORT}`);
 });
 
