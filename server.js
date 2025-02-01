@@ -16,12 +16,9 @@ app.use(express.json());
 app.post("/start", async (req, res) => {
   const { username, phoneNumber, token } = req.body;
 
-
-  if (!username || !phoneNumber || !token) {
-    return res.status(400).json({ error: "Missing required fields" });
-  }
-
+  if (!username || !phoneNumber || !token) return res.status(400).json({ error: "Missing required fields" });
   
+
   const val = await startBackgroundProcess(username, phoneNumber, token);
   res.status(val.status).json(val.message);
 });
@@ -29,7 +26,7 @@ app.post("/start", async (req, res) => {
 
 app.delete("/end", async (req, res) => {
   const { username } = req.body;
-
+  if (!username) return res.status(400).json({ error: "Missing required fields" });
 
   const stopped = await stopBackgroundProcess(username);
   stopped ? res.json(`Grade checking stopped for user: ${username}`): res.status(404).json("No active process for this user");
