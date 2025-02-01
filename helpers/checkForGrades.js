@@ -38,7 +38,7 @@ async function checkForUpdates(user) {
         )
     );
 
-    if (newGrades !== undefined && newGrades.length > 0) {
+    if (newGrades.length > 0) {
       sendSMS(phoneNumber, newGrades, extractedGradesData.CGPA).catch(
         console.error
       );
@@ -46,13 +46,8 @@ async function checkForUpdates(user) {
     }
 
     if (extractedGradesData.pendingCourses.length === 0) {
-      sendSMS(
-        phoneNumber,
-        [{ message: "All grades revealed!" }],
-        extractedGradesData.CGPA
-      ).catch(console.error);
       await deleteUserProcess(username);
-      sendWhatsapp(phoneNumber, "All grades revealed. Service stopped.").catch(
+      sendWhatsapp(phoneNumber, `All grades revealed. Service stopped. Thank you for using the service.\n*CGPA:* ${extractGradesData.CGPA}.`).catch(
         console.error
       );
     }
