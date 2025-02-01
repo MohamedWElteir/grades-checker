@@ -38,7 +38,7 @@ async function checkForUpdates(user) {
         )
     );
 
-    if (newGrades.length > 0) {
+    if (newGrades !== undefined && newGrades.length > 0) {
       sendSMS(phoneNumber, newGrades, extractedGradesData.CGPA).catch(
         console.error
       );
