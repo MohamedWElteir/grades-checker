@@ -30,8 +30,8 @@ async function extractGradesData($, username) {
     if (numberOfTables === 0) console.error("No grade tables found in the HTML content.");
 
     const lastTableIndex = numberOfTables - 1;
-    const gridViewId = `${labelPrefix}_GridView1_${lastTableIndex}`;
-    const formViewId = `${labelPrefix}_FormView1_${lastTableIndex}_CGPALabel`;
+    const gridViewId = `${labelPrefix}_GridView1_${lastTableIndex}`; // Most recent courses table
+    const formViewId = `${labelPrefix}_FormView1_${lastTableIndex}_CGPALabel`; // Corresponding CGPA on that same table
     const CGPA = $(`#${formViewId}`).text().trim();
     const tableElement = $(`#${gridViewId}`);
     if (tableElement.length === 0) console.warn(`Table with id '${gridViewId}' not found.`);

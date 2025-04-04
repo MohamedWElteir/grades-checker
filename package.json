@@ -2,7 +2,7 @@
   "name": "grades-checker",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,14 +10,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@vercel/speed-insights": "^1.1.0",
     "cheerio": "^1.0.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "grades-checker": "file:",
     "mongoose": "^8.9.5",
     "node-cron": "^3.0.3",
-    "puppeteer": "^24.1.0",
     "twilio": "^5.4.2"
   }
 }
