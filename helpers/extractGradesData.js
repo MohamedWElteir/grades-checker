@@ -30,8 +30,8 @@ async function extractGradesData($, username) {
     if (numberOfTables === 0) console.error("No grade tables found in the HTML content.");
 
     const lastTableIndex = numberOfTables - 1;
-    const gridViewId = `${labelPrefix}_GridView1_${lastTableIndex}`;
-    const formViewId = `${labelPrefix}_FormView1_${lastTableIndex}_CGPALabel`;
+    const gridViewId = `${labelPrefix}_GridView1_${lastTableIndex}`; // Most recent courses table
+    const formViewId = `${labelPrefix}_FormView1_${lastTableIndex}_CGPALabel`; // Corresponding CGPA on that same table
     const CGPA = $(`#${formViewId}`).text().trim();
     const tableElement = $(`#${gridViewId}`);
     if (tableElement.length === 0) console.warn(`Table with id '${gridViewId}' not found.`);
@@ -80,10 +80,10 @@ async function extractGradesData($, username) {
 
 function parseRecord(record, resultsProcessor) {
  const regex1 =
-   /(\d{9})\s+(\d{5})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F)\s+(\d\.\d{2})\s+(\d+)\s+(\d+\.\d{2})/;
+   /(\d{9})\s+(\d{5})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F|W|I)\s+(\d\.\d{2})\s+(\d+)\s+(\d+\.\d{2})/;
 
  const regex2 =
-   /(\d{9})\s+((?:\S+\s*){1,3})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F)\s+(\d\.\d{2})\s+(\d+)\s+(\d\.\d{2})/;
+   /(\d{9})\s+((?:\S+\s*){1,3})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F|W|I)\s+(\d\.\d{2})\s+(\d+)\s+(\d\.\d{2})/;
   let match = record.match(regex1);
   if (match) {
     try {
@@ -171,7 +171,7 @@ function processTableElement(tableElement) {
       record = record.replace(/(\d{9})(\d{5}|\D+)/, "$1 $2");
 
       record = record.replace(
-        /([A-D][+-]?|P|حذف|إستبيان|F)(\d\.\d{2})(\d+)(\d+\.\d{2})/,
+        /([A-D][+-]?|P|حذف|إستبيان|F|W|I)(\d\.\d{2})(\d+)(\d+\.\d{2})/,
         "$1 $2 $3 $4"
       );
       record = record.replace(/\s+/g, " ").trim();
