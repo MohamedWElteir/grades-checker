@@ -1,4 +1,84 @@
-# "Disclaimer"
-# The author of this script is not responsible for any damage caused by the use of this script. Use it at your own risk.
+# "Disclaimer" 
+**The author of this script is not responsible for any damage caused by the use of this script. Use it at your own risk.**
 
-# Grades checker
+# Grades checker And Notifier API
+
+
+## problem statement:
+ I am a student at the Faculty of Science, Alexandria University (AUFS). The university has a website where students can check their grades. However, the website is not very user-friendly, and it requires students to log in every time they want to check their grades. This is a problem for me because I often forget to check my grades. That's when I decided to create a script that will check my grades for me and notify me when they are available. I also wanted to make the script easy to use, so I decided to create a REST API that can be used by anyone who wants to check their grades.
+
+
+## Screenshots:
+Login page:
+![login page](assets/login_page.jpeg)
+this is the login page of the website.
+
+Home page:
+![main webpage screen](assets/main_page.jpeg)
+Once you log in, you will be redirected to the main page of the website. This page contains all the information about the student:
+- The student's full name
+- The student's department
+- Credit hours
+- CGPA
+- and other information. 
+
+Grades page:
+![grades page](assets/grades_page.jpeg)
+This is the page where the student can check their grades. The page contains a table for each semester, with the info about the courses the student has enrolled into as shown in the image above.
+
+## Let me explain how the script works:
+
+1. you just need to call the **/start** endpoint with the following parameters:
+    ```json
+    {
+        "username": "your_username",
+        "phoneNumber": "your_phone_number",
+        "token": "your_token"
+    }
+    ```
+
+    - **username**: your username (the one you use to log in to the website, however, you can use anything as a username, it will be used to identify the user in the database)
+    - **phoneNumber**: your phone number (the one you use to receive the notification)
+    - **token**: I was lazy in the implementation of the API, so you will just need to log in to the website once and copy the token from the url. As this approach was the easiest for me to implement. (**I will explain how to get the token in the next section**)
+
+To get the token, just follow these steps:
+- open the website in your browser and log in to your account.
+- Once logged in, the url should look like this:
+```bash
+https://www.scialex.org/S/your_token/Student/2018
+```
+- just copy the token from the url and paste it in the token parameter in the API. That's it!
+- The token will be used to authenticate the user and get the grades.
+- If the token expires for any reason, you will be notified via whatsapp. And you will need to log in again and get a new token.
+- The token will be stored in the database and will be used to authenticate the user in the future.
+
+
+- The API will check if the user is already registered in the database. If not, it will register the user and store the token in the database and send a message via whatsapp to the user with a  message like this:
+```
+"Hello {username}, you have successfully registered to the grades checker API. You will be notified via whatsapp when your grades are available."
+```
+- The API will regulary check the grades every 5 minutes and if the grades are available, it will send a message via whatsapp to the user with a message with the revealed grades and the current CGPA. The message will look like this:
+![notification message](assets/grades_notification.jpg)
+
+Once all grades are revealed, the API will stop checking the grades and will send a message to the user with a message like this:
+```
+"Hello {username}, all your grades are revealed. Your current CGPA is {cgpa}. Thank you for using the grades checker API."
+```
+- The API will also send a message to the user if the token expires and the user needs to log in again and get a new token. The message will look like this:
+```
+"Hello {username}, your token has expired. Please log in again and get a new token. Thank you for using the grades checker API."
+```
+However, if you decide to stop the service, you can just call the **/stop** endpoint with the following parameters:
+```json
+{
+    "username": "your_username"
+}
+```
+- The API will stop checking the grades and will send a message to the user with a message like this:
+```
+"Hello {username}, you have successfully stopped the grades checker API. Thank you for using the grades checker API."
+```
+- **The API will also delete the user and all his info from the database.**
+
+# Final words:
+In the end, this is a script I did for fun and because I am lazy and I don't want to check my grades every time. **I am not responsible for any damage caused by the use of this script. Use it at your own risk.** I hope you find it useful.
