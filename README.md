@@ -30,6 +30,7 @@ This is the page where the student can check their grades. The page contains a t
 
 1. you just need to call the **/start** endpoint with the following parameters:
     ```json
+    POST /start HTTP/1.1
     {
         "username": "your_username",
         "phoneNumber": "your_phone_number",
@@ -70,6 +71,7 @@ Once all grades are revealed, the API will stop checking the grades and will sen
 ```
 However, if you decide to stop the service, you can just call the **/stop** endpoint with the following parameters:
 ```json
+DELETE /stop HTTP/1.1
 {
     "username": "your_username"
 }
