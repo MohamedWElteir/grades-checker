@@ -39,8 +39,18 @@ This is the page where the student can check their grades. The page contains a t
     ```
 
     - **username**: your username (the one you use to log in to the website, however, you can use anything as a username, it will be used to identify the user in the database)
-    - **phoneNumber**: your phone number (the one you use to receive the notification)
+    - **phoneNumber**: your phone number (the one you use to receive the notification). **Make sure it is a valid phone number (starting with the country code).**
     - **token**: I was lazy in the implementation of the API, so you will just need to log in to the website once and copy the token from the url. As this approach was the easiest for me to implement. (**I will explain how to get the token in the next section**)
+
+    Example call:
+    ```json
+    POST /start HTTP/1.1
+    {
+        "username": "2024123456",
+        "phoneNumber": "+201234567890",
+        "token": "your_token"
+    }
+    ```
 
 To get the token, just follow these steps:
 - open the website in your browser and log in to your account.
