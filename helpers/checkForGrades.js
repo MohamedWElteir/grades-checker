@@ -47,7 +47,7 @@ async function checkForUpdates(user) {
 
     if (extractedGradesData.pendingCourses.length === 0) {
       await deleteUserProcess(username);
-      sendWhatsapp(phoneNumber, `All grades revealed. Service stopped. Thank you for using the service.\n*CGPA:* ${extractGradesData.CGPA}.`).catch(
+      sendWhatsapp(phoneNumber, `All grades revealed. Service stopped. Thank you for using the service.\n*CGPA:* ${extractedGradesData.CGPA}.`).catch(
         console.error
       );
     }
