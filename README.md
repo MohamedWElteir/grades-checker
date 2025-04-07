@@ -64,20 +64,22 @@ https://www.scialex.org/S/your_token/Student/2018
 - The token will be stored in the database and will be used to authenticate the user in the future.
 
 
-- The API will check if the user is already registered in the database. If not, it will register the user and store the token in the database and send a message via whatsapp to the user with a  message like this:
+- The API will check if the user is already registered in the database. If not, it will register the user and store the token in the database and send a message via WhatsApp to the user with a  message like this:
 ```
-"Hello {username}, you have successfully registered to the grades checker API. You will be notified via whatsapp when your grades are available."
+"Hello! You have successfully registered to the grades checker API. You will be notified via SMS when your grades are available."
 ```
-- The API will regulary check the grades every 5 minutes and if the grades are available, it will send a message via whatsapp to the user with a message with the revealed grades and the current CGPA. The message will look like this:
+- The API will regulary check the grades every **9 minutes**, and that was achieved by using cron-jobs, and if any grades had been revealed, it will send a message via SMS to the user with the revealed grades and the current CGPA. The message will look like this:
 ![notification message](assets/grades_notification.jpg)
 
-Once all grades are revealed, the API will stop checking the grades and will send a message to the user with a message like this:
+I implemented the checking logic to check the **grades column**, by default after you completed the course survey, the grade for the course is **'P'** indicating that the grade is not revealed yet. Once the grade is revealed, it will be changed to **'A'** or **'B'** or any other grade. So I just check if the grade is 'P' or not. If it is not 'P', then the grade is revealed and I will send a message to the user with the revealed grades and the current CGPA.
+
+Once all grades are revealed, the API will stop checking the grades and will send a message via WhatsApp to the user with a message like this:
 ```
-"Hello {username}, all your grades are revealed. Your current CGPA is {cgpa}. Thank you for using the grades checker API."
+"Hello! All your grades are revealed. Your current CGPA is {cgpa}. Thank you for using the grades checker API."
 ```
-- The API will also send a message to the user if the token expires and the user needs to log in again and get a new token. The message will look like this:
+- The API will also send a message to the user via WhatsApp, if the token expires and the user needs to log in again and get a new token. The message will look like this:
 ```
-"Hello {username}, your token has expired. Please log in again and get a new token. Thank you for using the grades checker API."
+"Hello! Your token has expired. Please log in again and get a new token. Thank you for using the grades checker API."
 ```
 However, if you decide to stop the service, you can just call the **/stop** endpoint with the following parameters:
 ```json
@@ -88,7 +90,7 @@ DELETE /stop HTTP/1.1
 ```
 - The API will stop checking the grades and will send a message to the user with a message like this:
 ```
-"Hello {username}, you have successfully stopped the grades checker API. Thank you for using the grades checker API."
+"Hello! You have successfully stopped the grades checker API. Thank you for using the grades checker API."
 ```
 - **The API will also delete the user and all his info from the database.**
 
