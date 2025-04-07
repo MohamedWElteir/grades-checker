@@ -7,6 +7,7 @@
 ## problem statement:
  I am a student at the Faculty of Science, Alexandria University (AUFS). The university has a website where students can check their grades. However, the website is not very user-friendly, and it requires students to log in every time they want to check their grades. This is a problem for me because I often forget to check my grades. That's when I decided to create a script that will check my grades for me and notify me when they are available. I also wanted to make the script easy to use, so I decided to create a **REST API** that can be used by anyone who wants to check their grades.
 
+**Quick note:** Make sure you are calling the API from a computer not using a mobile app because it does not work there and I don't know why. Use a tool like Postman as this tool is tested and it's working with it.
 
 ## Screenshots:
 **Login page:**
