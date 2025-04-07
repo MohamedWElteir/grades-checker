@@ -17,9 +17,9 @@ app.use(express.json());
 app.post("/start", validateFields(["username", "phoneNumber", "token"]), async (req, res) => {
   const { username, phoneNumber, token } = req.body;
 
-    const val = await startBackgroundProcess(username, phoneNumber, token);
-  res.status(val.status).json({
-    message: val.message
+    const result = await startBackgroundProcess(username, phoneNumber, token);
+  res.status(result.status).json({
+    message: result.message
   });
 });
 

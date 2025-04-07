@@ -68,7 +68,7 @@ https://www.scialex.org/S/your_token/Student/2018
 ```
 "Hello! You have successfully registered to the grades checker API. You will be notified via SMS when your grades are available."
 ```
-- The API will regulary check the grades every **9 minutes**, and that was achieved by using cron-jobs, and if any grades had been revealed, it will send a message via SMS to the user with the revealed grades and the current CGPA. The message will look like this:
+- The API will regularly check the grades every **9 minutes**, and that was achieved by using cron-jobs, and if any grades had been revealed, it will send a message via SMS to the user with the revealed grades and the current CGPA. The message will look like this:
 ![notification message](assets/grades_notification.jpg)
 
 I implemented the checking logic to check the **grades column**, by default after you completed the course survey, the grade for the course is **'P'** indicating that the grade is not revealed yet. Once the grade is revealed, it will be changed to **'A'** or **'B'** or any other grade. So I just check if the grade is 'P' or not. If it is not 'P', then the grade is revealed and I will send a message to the user with the revealed grades and the current CGPA.
