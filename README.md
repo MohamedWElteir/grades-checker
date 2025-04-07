@@ -74,15 +74,15 @@ https://www.scialex.org/S/your_token/Student/2018
 
 I implemented the checking logic to check the **Appreciation** column, by default after you completed the course's survey, the grade for the course is **'P'** indicating that the grade is not revealed yet. Once the grade is revealed, it will be changed to **'A'** or **'B'** or any other grade. So I just check if the grade is 'P' or not. If it is not 'P', then the grade is revealed and I will send a message to the user with the revealed grades and the current CGPA.
 
-Once all grades are revealed, the API will stop checking the grades and will send a message via WhatsApp to the user with a message like this:
+Once all grades are revealed, the API will stop checking the grades, delete all the user's data, and will send a message via WhatsApp to the user with a message like this:
 ```
 "Hello! All your grades are revealed. Your current CGPA is {cgpa}. Thank you for using the grades checker API."
 ```
-- The API will also send a message to the user via WhatsApp, if the token expires and the user needs to log in again and get a new token. The message will look like this:
+- The API will also send a message to the user via WhatsApp, if the token expires and the user would need to log in again and get a new token, then call the **/start** endpoint again. The message will look like this:
 ```
 "Hello! Your token has expired. Please log in again and get a new token. Thank you for using the grades checker API."
 ```
-However, if you decide to stop the service, you can just call the **/stop** endpoint with the following parameters:
+However, if you decide to stop the service at anytime, you can just call the **/stop** endpoint with the following parameters:
 ```json
 DELETE /stop HTTP/1.1
 {
