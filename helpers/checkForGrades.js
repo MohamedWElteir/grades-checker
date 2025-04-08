@@ -13,6 +13,8 @@ const cron = require("node-cron");
 cron.schedule("*/9 * * * *", async () => { // every 9 minutes
   console.log("Running grade update check...");
   const users = await getAllActiveProcesses();
+  if(!users || users.length === 0) return console.log("No active processes found.");
+  console.log(`Running checks for ${users.length} active processes.`);
   for (const user of users) checkForUpdates(user);
   
 });
@@ -107,7 +109,7 @@ async function stopBackgroundProcess(username) {
      await deleteUserProcess(username);
      sendWhatsapp(
        processInfo.phoneNumber,
-       `Grade checking service has been stopped. \Info:\n ${Object.entries(info)
+       `Grade checking service has been stopped. \nInfo:\n ${Object.entries(info)
          .map(([key, value]) => `*${key}*: ${value}`)
          .join("\n")}`
      ).catch((err) => console.error("Error sending WhatsApp message:", err));
