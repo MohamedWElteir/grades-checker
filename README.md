@@ -96,5 +96,13 @@ DELETE /stop HTTP/1.1
 ```
 - **The API will also delete the user and all his info from the database.**
 
+# Hosting:
+Well, I needed to host the API somewhere, so based on my use case, I decided to use **GCP**. I used the **Google App Engine** to host the API. The API is hosted on a free tier, as the API is not very heavy and does not require a lot of resources. But if the API is used by a lot of users, I would need to upgrade the plan, and I don't think I will do that. So the solution for you would be to either:
+ 
+1. **Host it on your own server (if you have one).**
+2. **Use a free hosting service like Heroku or Render.**
+3. **Use a container service like Docker and host it on your own machine (which I highly recommend).**
+4. **Use a cloud service like AWS or Azure (which I don't recommend as it is expensive).**
+
 # Final words:
 In the end, this is a script I did for fun and because I am lazy and I don't want to check my grades every time. **I am not responsible for any damage caused by the use of this script. Use it at your own risk.** I hope you find it useful.
