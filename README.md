@@ -1,5 +1,5 @@
 # "Disclaimer" 
-***The author of this script is not responsible for any damage caused by the use of this script. Use it at your own risk.****
+***The author is not responsible for any damage caused by the use of this API. Use it at your own risk.****
 
 # Grades checker And Notifier API
 
@@ -40,9 +40,9 @@ Please note that the website is in **Arabic**, and all the course names are in *
     }
     ```
 
-    - **username**: your username (the one you use to log in to the website, however, you can use anything as a username, it will be used to identify the user in the database)
-    - **phoneNumber**: your phone number (the one you use to receive the notification). **Make sure it is a valid phone number (starting with the country code).**
-    - **token**: I was lazy in the implementation of the API, so you will just need to log in to the website once and copy the token from the url. As this approach was the easiest for me to implement. (**I will explain how to get the token in the next section**)
+    - **username** (string): your username (the one you use to log in to the website, however, you can use anything as a username, it will be used to identify the user in the database)
+    - **phoneNumber** (string): your phone number (the one you use to receive the notification). **Make sure it is a valid phone number format (starting with the country code).**
+    - **token** (string): I was lazy in the implementation of the API, so you will just need to log in to the website once and copy the token from the url. As this approach was the easiest for me to implement. (**I will explain how to get the token in the next section**)
 
     Example call:
     ```json
