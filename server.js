@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const fs = require("fs");
 const path = require("path");
 const marked = require("marked");
+const {rateLimit} = require("express-rate-limit");
 dotenv.config();
 const PORT = process.env.PORT || 3000;
 
@@ -14,10 +15,31 @@ const {
 
 const {validateFields} = require("./middlewares/validateFields");
 
+const createRateLimitWindow = (maxRequests, windowMinutes) => {
+  return rateLimit({
+    windowMs: windowMinutes * 60 * 1000,
+    max: maxRequests,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: "Too many requests, please try again later.",
+    handler: (req, res, next, options) => {
+      console.warn(`Rate limit exceeded for IP: ${req.ip}`);
+      res.status(options.statusCode).json({ error: options.message });
+    },
+  });
+};
+
+const globalLimiter = createRateLimitWindow(150,15)
+const baseLimiter = createRateLimitWindow(100, 15);
+const docsLimiter = createRateLimitWindow(80, 15);
+const postLimiter = createRateLimitWindow(12, 15); 
+const deleteLimiter = createRateLimitWindow(12, 15); 
+
 app.use(express.json());
+app.use(globalLimiter)
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 
-app.get("/", async (req, res) => {
+app.get("/", baseLimiter, async (req, res) => {
   res.json({
     message: "Welcome to the Grade Checker API! An API developed by @MohamedWElteir",
     routes: {
@@ -30,7 +52,7 @@ app.get("/", async (req, res) => {
   }); 
 });
 
-app.get("/docs", async (req, res) => {
+app.get("/docs", docsLimiter, async (req, res) => {
   const readmePath = path.join(__dirname, "README.md");
 
   fs.readFile(readmePath, "utf8", async (err, data) => {
@@ -104,17 +126,27 @@ app.get("/docs", async (req, res) => {
   });
 });
 
-app.post("/start", validateFields(["username", "phoneNumber", "token"]), async (req, res) => {
+app.post("/start", postLimiter, validateFields(["username", "phoneNumber", "token"]), async (req, res) => {
   const { username, phoneNumber, token } = req.body;
 
+  try
+  {
     const result = await startBackgroundProcess(username, phoneNumber, token);
   res.status(result.status).json({
     message: result.message
   });
+  } catch (error){
+    console.error(error)
+    res
+      .status(500)
+      .json({
+        error: "An error occurred while starting the background process.",
+      });
+   }
 });
 
 
-app.delete("/end", validateFields(["username"]), async (req, res) => {
+app.delete("/end", deleteLimiter, validateFields(["username"]), async (req, res) => {
   const { username } = req.body;
   const stopped = await stopBackgroundProcess(username);
   stopped
