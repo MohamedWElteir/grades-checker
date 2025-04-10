@@ -148,14 +148,22 @@ app.post("/start", postLimiter, validateFields(["username", "phoneNumber", "toke
 
 app.delete("/end", deleteLimiter, validateFields(["username"]), async (req, res) => {
   const { username } = req.body;
-  const stopped = await stopBackgroundProcess(username);
-  stopped
-    ? res.json({
-      message: `Grade checking stopped for user: ${username}`
-    })
-    : res.status(404).json({
-      error: "No active process for this user"
+
+  try {
+    const stopped = await stopBackgroundProcess(username);
+    stopped
+      ? res.json({
+          message: `Grade checking stopped for user: ${username}`
+        })
+      : res.status(404).json({
+          error: "No active process for this user"
+        });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "An error occurred while stopping the background process.",
     });
+  }
 });
 
 
