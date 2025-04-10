@@ -7,6 +7,8 @@ const {
   getUserProcess,
   deleteUserProcess,
   getAllActiveProcesses,
+  deleteUserSeccion,
+  deleteAllUserInstance,
 } = require("./userListHandler");
 const cron = require("node-cron");
 
@@ -93,7 +95,12 @@ async function startBackgroundProcess(username, phoneNumber, token) {
  }
 }
 
-
+const formatDate = (date) => {
+  return new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "short",
+    timeStyle: "medium",
+  }).format(new Date(date));
+};
 
 async function stopBackgroundProcess(username) { 
  const processInfo = await getUserProcess(username);
@@ -101,15 +108,15 @@ async function stopBackgroundProcess(username) {
   const runtime = new Date() - new Date(processInfo.startTime);
   const info = {
     runtime: `${Math.round(runtime / (1000 * 60))} minutes`,
-    startTime: processInfo.startTime,
-    endTime: new Date().toISOString(),
+    startTime: formatDate(processInfo.startTime),
+    endTime: formatDate(new Date()),
   };
     console.log(`Process statistics for ${username}:`, info);
 
-     await deleteUserProcess(username);
+     await deleteAllUserInstance(username);
      sendWhatsapp(
        processInfo.phoneNumber,
-       `Grade checking service has been stopped. \nInfo:\n ${Object.entries(info)
+       `Grade checking service has been stopped. \nInfo:\n${Object.entries(info)
          .map(([key, value]) => `*${key}*: ${value}`)
          .join("\n")}`
      ).catch((err) => console.error("Error sending WhatsApp message:", err));

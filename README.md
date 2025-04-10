@@ -11,11 +11,11 @@
 
 ## Screenshots:
 **Login page:**
-![login page](assets/login_page.jpeg)
+![login page](/assets/login_page.jpeg)
 this is the login page of the website.
 
 **Home page:**
-![main webpage screen](assets/main_page.jpeg)
+![main webpage screen](/assets/main_page.jpeg)
 Once you log in, you will be redirected to the main page of the website. This page contains all the information about the student:
 - The student's full name
 - The student's department
@@ -24,7 +24,7 @@ Once you log in, you will be redirected to the main page of the website. This pa
 - and other information. 
 
 **Grades page:**
-![grades page](assets/grades_page.jpeg)
+![grades page](/assets/grades_page.jpeg)
 This is the page where the student can check their grades. The page contains a table for each semester, with the info about the courses the student has enrolled into as shown in the image above.
 Please note that the website is in **Arabic**, and all the course names are in **Arabic**, I translated the site so anyone would understand the concept. So the API will send the grades in Arabic (as how you will see later) since **the website is in Arabic by default.**.
 
@@ -41,7 +41,7 @@ Please note that the website is in **Arabic**, and all the course names are in *
     ```
 
     - **username**: your username (the one you use to log in to the website, however, you can use anything as a username, it will be used to identify the user in the database)
-    - **phoneNumber**: your phone number (the one you use to receive the notification). **Make sure it is a valid phone number (starting with the country code).**
+    - **phoneNumber**: your phone number (the one you use to receive the notification). **Make sure it is in [valid phone number format](https://faq.whatsapp.com/1294841057948784).**
     - **token**: I was lazy in the implementation of the API, so you will just need to log in to the website once and copy the token from the url. As this approach was the easiest for me to implement. (**I will explain how to get the token in the next section**)
 
     Example call:
@@ -71,7 +71,7 @@ https://www.scialex.org/S/your_token/Student/2018
 "Hello! You have successfully registered to the grades checker API. You will be notified via SMS when your grades are available."
 ```
 - The API will regularly check the grades every **9 minutes**, and that was achieved by using cron-jobs, and if any grades had been revealed, it will send a message via SMS to the user with the revealed grades and the current CGPA. The message will look like this:
-![notification message](assets/grades_notification.jpg)
+![notification message](/assets/grades_notification.jpg)
 
 I implemented the checking logic to check the **Appreciation** column, by default after you completed the course's survey, the grade for the course is **'P'** indicating that the grade is not revealed yet. Once the grade is revealed, it will be changed to **'A'** or **'B'** or any other grade. So I just check if the grade is 'P' or not. If it is not 'P', then the grade is revealed and I will send a message to the user with the revealed grades and the current CGPA.
 
