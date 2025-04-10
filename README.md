@@ -94,6 +94,17 @@ DELETE /stop HTTP/1.1
 ```
 - **The API will also delete the user and all his info from the database.**
 
+# key Features:
+- The API supports sending notifications via SMS and WhatsApp when grades are available.
+- Users can register and unregister from the grades checking service easily.
+- The API checks the grades every **9 minutes** and sends notifications when grades are available.
+- The API will tell the user if there are any courses that are not polled yet (استبيان) so they can go and fill the survey for the course.
+- The API will also send a message to the user if the token expires and the user would need to log in again and get a new token.
+- The API will also notify users when their grades are available via SMS and WhatsApp.
+
+# Additional Features:
+I implemented a rate limiting feature to prevent abuse of the API. The API will limit the number of requests to **100 requests per minute**. If the user exceeds this limit, the API will return a **429 Too Many Requests** error.
+
 # Hosting:
 Well, I needed to host the API somewhere, so based on my use case, I decided to use **GCP**. I used the **Google App Engine** to host the API. The API is hosted on a free tier, as the API is not very heavy and does not require a lot of resources. But if the API is used by a lot of users, I would need to upgrade the plan, and I don't think I will do that. So the solution for you would be to either:
  

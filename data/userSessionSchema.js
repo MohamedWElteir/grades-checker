@@ -12,7 +12,18 @@ const userSessionSchema = new mongoose.Schema(
         points: Number,
         hours: Number,
         totalPoints: Number,
-      },
+      }
+    ],
+    notPolledCourses: [
+      {
+        courseCode: String,
+        oldCourseCode: String,
+        courseName: String,
+        grade: String,
+        points: Number,
+        hours: Number,
+        totalPoints: Number,
+      }
     ],
     CGPA: { type: String },
   },

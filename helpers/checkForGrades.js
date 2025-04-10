@@ -85,6 +85,14 @@ async function startBackgroundProcess(username, phoneNumber, token) {
       .join("\n")}\n Current CGPA: *${initialGradesData.CGPA}*`
   ).catch((err) => console.error("Error sending WhatsApp message:", err));
 
+   if (initialGradesData.notPolledCourses.length > 0) {
+      sendWhatsapp(
+        phoneNumber,
+        `You have ${initialGradesData.notPolledCourses.length} courses that are not polled yet:\n ${initialGradesData.notPolledCourses
+          .map((course) => course.courseName)
+          .join("\n")}`
+      ).catch((err) => console.error("Error sending WhatsApp message:", err));
+    }
    return { status: 200, message: "Grade checking started" };
  } catch (error) {
    console.error(
