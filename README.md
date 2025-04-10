@@ -2,9 +2,7 @@
 ***The author of this script is not responsible for any damage caused by the use of this script. Use it at your own risk.****
 
 # Grades checker And Notifier API
-
-
-## problem statement:
+## Problem statement:
  I am a student at the Faculty of Science, Alexandria University (AUFS). The university has a website where students can check their grades. However, the website is not very user-friendly, and it requires students to log in every time they want to check their grades. This is a problem for me because I often forget to check my grades. That's when I decided to create a script that will check my grades for me and notify me when they are available. I also wanted to make the script easy to use, so I decided to create a **REST API** that can be used by anyone who wants to check their grades.
 
 **Quick note:** Make sure you are calling the API from a computer not using a mobile app because it does not work there and I don't know why. Use a tool like Postman as this tool is tested and it's working with it.
@@ -35,13 +33,13 @@ Please note that the website is in **Arabic**, and all the course names are in *
     POST /start HTTP/1.1
     {
         "username": "your_username",
-        "phoneNumber": "your_phone_number",
+        "phoneNumber": "your_phone_number", 
         "token": "your_token"
     }
     ```
 
     - **username**: your username (the one you use to log in to the website, however, you can use anything as a username, it will be used to identify the user in the database)
-    - **phoneNumber**: your phone number (the one you use to receive the notification). **Make sure it is in [valid phone number format](https://faq.whatsapp.com/1294841057948784).**
+    - **phoneNumber**: your phone number (the one you use to receive the notification). **Make sure it is in [<u>valid WhatsApp phone number format</u>](https://faq.whatsapp.com/1294841057948784).**
     - **token**: I was lazy in the implementation of the API, so you will just need to log in to the website once and copy the token from the url. As this approach was the easiest for me to implement. (**I will explain how to get the token in the next section**)
 
     Example call:
