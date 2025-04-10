@@ -1,21 +1,19 @@
 # "Disclaimer" 
-***The author is not responsible for any damage caused by the use of this API. Use it at your own risk.****
+***The author of this script is not responsible for any damage caused by the use of this script. Use it at your own risk.****
 
 # Grades checker And Notifier API
-
-
-## problem statement:
+## Problem statement:
  I am a student at the Faculty of Science, Alexandria University (AUFS). The university has a website where students can check their grades. However, the website is not very user-friendly, and it requires students to log in every time they want to check their grades. This is a problem for me because I often forget to check my grades. That's when I decided to create a script that will check my grades for me and notify me when they are available. I also wanted to make the script easy to use, so I decided to create a **REST API** that can be used by anyone who wants to check their grades.
 
 **Quick note:** Make sure you are calling the API from a computer not using a mobile app because it does not work there and I don't know why. Use a tool like Postman as this tool is tested and it's working with it.
 
 ## Screenshots:
 **Login page:**
-![login page](assets/login_page.jpeg)
+![login page](/assets/login_page.jpeg)
 this is the login page of the website.
 
 **Home page:**
-![main webpage screen](assets/main_page.jpeg)
+![main webpage screen](/assets/main_page.jpeg)
 Once you log in, you will be redirected to the main page of the website. This page contains all the information about the student:
 - The student's full name
 - The student's department
@@ -24,7 +22,7 @@ Once you log in, you will be redirected to the main page of the website. This pa
 - and other information. 
 
 **Grades page:**
-![grades page](assets/grades_page.jpeg)
+![grades page](/assets/grades_page.jpeg)
 This is the page where the student can check their grades. The page contains a table for each semester, with the info about the courses the student has enrolled into as shown in the image above.
 Please note that the website is in **Arabic**, and all the course names are in **Arabic**, I translated the site so anyone would understand the concept. So the API will send the grades in Arabic (as how you will see later) since **the website is in Arabic by default.**.
 
@@ -35,14 +33,14 @@ Please note that the website is in **Arabic**, and all the course names are in *
     POST /start HTTP/1.1
     {
         "username": "your_username",
-        "phoneNumber": "your_phone_number",
+        "phoneNumber": "your_phone_number", 
         "token": "your_token"
     }
     ```
 
-    - **username** (string): your username (the one you use to log in to the website, however, you can use anything as a username, it will be used to identify the user in the database)
-    - **phoneNumber** (string): your phone number (the one you use to receive the notification). **Make sure it is a valid phone number format (starting with the country code).**
-    - **token** (string): I was lazy in the implementation of the API, so you will just need to log in to the website once and copy the token from the url. As this approach was the easiest for me to implement. (**I will explain how to get the token in the next section**)
+    - **username**: your username (the one you use to log in to the website, however, you can use anything as a username, it will be used to identify the user in the database)
+    - **phoneNumber**: your phone number (the one you use to receive the notification). **Make sure it is in [<u>valid WhatsApp phone number format</u>](https://faq.whatsapp.com/1294841057948784).**
+    - **token**: I was lazy in the implementation of the API, so you will just need to log in to the website once and copy the token from the url. As this approach was the easiest for me to implement. (**I will explain how to get the token in the next section**)
 
     Example call:
     ```json
@@ -71,7 +69,7 @@ https://www.scialex.org/S/your_token/Student/2018
 "Hello! You have successfully registered to the grades checker API. You will be notified via SMS when your grades are available."
 ```
 - The API will regularly check the grades every **9 minutes**, and that was achieved by using cron-jobs, and if any grades had been revealed, it will send a message via SMS to the user with the revealed grades and the current CGPA. The message will look like this:
-![notification message](assets/grades_notification.jpg)
+![notification message](/assets/grades_notification.jpg)
 
 I implemented the checking logic to check the **Appreciation** column, by default after you completed the course's survey, the grade for the course is **'P'** indicating that the grade is not revealed yet. Once the grade is revealed, it will be changed to **'A'** or **'B'** or any other grade. So I just check if the grade is 'P' or not. If it is not 'P', then the grade is revealed and I will send a message to the user with the revealed grades and the current CGPA.
 
