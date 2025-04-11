@@ -35,7 +35,7 @@ const postLimiter = createRateLimitWindow(12, 15);
 const deleteLimiter = createRateLimitWindow(12, 15);
 
 app.use(express.json());
-app.set("trust proxy", true); // Trust first proxy (if behind a reverse proxy)
+app.set("trust proxy", 1); // Trust first proxy (if behind a reverse proxy)
 app.use(globalLimiter);
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 
