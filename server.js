@@ -28,7 +28,7 @@ const createRateLimitWindow = (maxRequests, windowMinutes) => {
   });
 };
 
-const globalLimiter = createRateLimitWindow(150, 15);
+const globalLimiter = createRateLimitWindow(100, 15);
 const baseLimiter = createRateLimitWindow(100, 15);
 const docsLimiter = createRateLimitWindow(80, 15);
 const postLimiter = createRateLimitWindow(12, 15);
@@ -177,7 +177,7 @@ app.delete(
       const stopped = await stopBackgroundProcess(username);
       stopped
         ? res.json({
-            message: `Grade checking stopped for user: ${username}`,
+            message: `Grade checking service stopped for user: ${username}`,
           })
         : res.status(404).json({
             error: "No active process for this user",

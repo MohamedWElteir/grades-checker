@@ -10,9 +10,9 @@
 ## Screenshots:
 **Login page:**
 ![login page](/assets/login_page.jpeg)
-this is the login page of the website.
+This is the login page of the website.
 
-**Home page:**
+**Main page:**
 ![main webpage screen](/assets/main_page.jpeg)
 Once you log in, you will be redirected to the main page of the website. This page contains all the information about the student:
 - The student's full name
@@ -26,9 +26,9 @@ Once you log in, you will be redirected to the main page of the website. This pa
 This is the page where the student can check their grades. The page contains a table for each semester, with the info about the courses the student has enrolled into as shown in the image above.
 Please note that the website is in **Arabic**, and all the course names are in **Arabic**, I translated the site so anyone would understand the concept. So the API will send the grades in Arabic (as how you will see later) since **the website is in Arabic by default.**.
 
-## Let me explain how the script works:
+## Let me explain how to use the API:
 
-1. you just need to call the **/start** endpoint with the following parameters:
+1. You just need to call the **/start** endpoint with the following parameters:
     ```json
     POST /start HTTP/1.1
     {
@@ -38,33 +38,42 @@ Please note that the website is in **Arabic**, and all the course names are in *
     }
     ```
 
-    - **username**: your username (the one you use to log in to the website, however, you can use anything as a username, it will be used to identify the user in the database)
-    - **phoneNumber**: your phone number (the one you use to receive the notification). **Make sure it is in [<u>valid WhatsApp phone number format</u>](https://faq.whatsapp.com/1294841057948784).**
-    - **token**: I was lazy in the implementation of the API, so you will just need to log in to the website once and copy the token from the url. As this approach was the easiest for me to implement. (**I will explain how to get the token in the next section**)
+    - **username** (**string**): your username (the one you use to log in to the website, however, you can use anything as a username, it will be used to identify the user in the database)
+    - **phoneNumber** (**string**): your phone number (the one you use to receive the notification). **Make sure it is in [<u>valid WhatsApp phone number format</u>](https://faq.whatsapp.com/1294841057948784).**
+    - **token** (**string**): I was lazy in the implementation of the API, so you will just need to log in to the website once and copy the token from the url. As this approach was the easiest for me to implement. (**I will explain how to get the token in the next section**)
 
-    Example call:
-    ```json
-    POST /start HTTP/1.1
+
+
+**Example call**:
+ ```json
+ POST /start HTTP/1.1
     {
         "username": "2024123456",
         "phoneNumber": "+201234567890",
         "token": "your_token"
     }
-    ```
+ ```
+ **Returns**:
+```json
+201 Created
+    {
+        "message": "Grade checking service started."
+    }
+```
 
 To get the token, just follow these steps:
-- open the website in your browser and log in to your account.
+- Open the website in your browser and log in to your account.
 - Once logged in, the url should look like this:
 ```bash
 https://www.scialex.org/S/your_token/Student/2018
 ```
-- just copy the token from the url and paste it in the token parameter in the API. That's it!
+- Just copy the token from the url and paste it in the token parameter in the API. That's it!
 - The token will be used to authenticate the user and get the grades.
-- If the token expires for any reason, you will be notified via whatsapp. And you will need to log in again and get a new token.
+- If the token expires for any reason, you will be notified via WhatsApp. And you will need to log in again and get a new token.
 - The token will be stored in the database and will be used to authenticate the user in the future.
 
 
-- The API will check if the user is already registered in the database. If not, it will register the user and store the token in the database and send a message via WhatsApp to the user with a  message like this:
+- The API will check if the user is already registered in the database. If not, it will register the user and store the token in the database and send a message via WhatsApp to the user with a message like this:
 ```
 "Hello! You have successfully registered to the grades checker API. You will be notified via SMS when your grades are available."
 ```
@@ -84,32 +93,39 @@ Once all grades are revealed, the API will stop checking the grades, delete all 
 However, if you decide to stop the service at anytime, you can just call the **/stop** endpoint with the following parameters:
 ```json
 DELETE /stop HTTP/1.1
+    {
+        "username": "your_username"
+    }
+```
+ **Returns**:
+```json
+200 Ok
 {
-    "username": "your_username"
+ "message": "Grade checking service stopped for user {username}."
 }
 ```
 - The API will stop checking the grades and will send a message to the user with a message like this:
 ```
 "Hello! You have successfully stopped the grades checker API. Thank you for using the grades checker API."
 ```
-- **The API will also delete the user and all his info from the database.**
+- **The API will also delete the user and all their info from the database.**
 
-# key Features:
+# Key Features:
 - The API supports sending notifications via SMS and WhatsApp when grades are available.
 - Users can register and unregister from the grades checking service easily.
 - The API checks the grades every **9 minutes** and sends notifications when grades are available.
 - The API will tell the user if there are any courses that are not polled yet (استبيان) so they can go and fill the survey for the course.
 - The API will also send a message to the user if the token expires and the user would need to log in again and get a new token.
-- The API will also notify users when their grades are available via SMS and WhatsApp.
+- The API will also notify users when their grades are available via **SMS** and **WhatsApp**.
 
 # Additional Features:
-I implemented a rate limiting feature to prevent abuse of the API. The API will limit the number of requests to **100 requests per minute**. If the user exceeds this limit, the API will return a **429 Too Many Requests** error.
+I implemented a rate limiting feature to prevent abuse of the API. The API will limit the number of requests to **100 requests every 15 minutes**. If the user exceeds this limit, the API will return a **429 Too Many Requests** error.
 
 # Hosting:
 Well, I needed to host the API somewhere, so based on my use case, I decided to use **GCP**. I used the **Google App Engine** to host the API. The API is hosted on a free tier, as the API is not very heavy and does not require a lot of resources. But if the API is used by a lot of users, I would need to upgrade the plan, and I don't think I will do that. So the solution for you would be to either:
  
 1. **Host it on your own server (if you have one).**
-2. **Use a free hosting service like Heroku or Render.**
+2. **Use a free hosting service like Heroku, Railway or Render.**
 3. **Use a container service like Docker and host it on your own machine (which I highly recommend).**
 4. **Use a cloud service like AWS or Azure (which I don't recommend as it is expensive).**
 

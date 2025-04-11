@@ -93,7 +93,8 @@ async function startBackgroundProcess(username, phoneNumber, token) {
           .join("\n")}`
       ).catch((err) => console.error("Error sending WhatsApp message:", err));
     }
-   return { status: 200, message: "Grade checking started" };
+   
+   return { status: 201, message: "Grade checking service started" };
  } catch (error) {
    console.error(
      `Error starting background process for ${username}:`,
