@@ -80,6 +80,15 @@ https://www.scialex.org/S/your_token/Student/2018
 - The API will regularly check the grades every **9 minutes**, and that was achieved by using cron-jobs, and if any grades had been revealed, it will send a message via SMS to the user with the revealed grades and the current CGPA. The message will look like this:
 ![notification message](/assets/grades_notification.jpg)
 
+**Sometimes, you would get a response like this:**
+```json
+500 Internal Server Error
+    {
+        "error": "Error starting background process for {username}: $ is not a function"
+    }
+```
+- This error is caused by the cloud. Sometimes the image instance might not be completely ready at the moment of the call. **This is a known issue and I am working on fixing it**. However, you can just ignore it and recall the endpoint again and the API will work as expected.
+
 I implemented the checking logic to check the **Appreciation** column, by default after you completed the course's survey, the grade for the course is **'P'** indicating that the grade is not revealed yet. Once the grade is revealed, it will be changed to **'A'** or **'B'** or any other grade. So I just check if the grade is 'P' or not. If it is not 'P', then the grade is revealed and I will send a message to the user with the revealed grades and the current CGPA.
 
 Once all grades are revealed, the API will stop checking the grades, delete all the user's data, and will send a message via WhatsApp to the user with a message like this:
