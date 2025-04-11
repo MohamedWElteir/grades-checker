@@ -21,8 +21,7 @@ async function extractGradesData($, username) {
   };
 
   try {
-    const labelPrefix = process.env.LABEL;
-    if (!labelPrefix) throw new Error("LABEL is not defined in the environment variables.");
+    const labelPrefix = "ContentPlaceHolder1_ContentPlaceHolder1_DataList1";
 
 
     const tables = $(`table[id^="${labelPrefix}_GridView1_"]`);
