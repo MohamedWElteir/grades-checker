@@ -12,7 +12,7 @@
 ![login page](/assets/login_page.jpeg)
 this is the login page of the website.
 
-**Home page:**
+**Main page:**
 ![main webpage screen](/assets/main_page.jpeg)
 Once you log in, you will be redirected to the main page of the website. This page contains all the information about the student:
 - The student's full name
