@@ -1,7 +1,7 @@
-# "Disclaimer" 
-***The author of this script is not responsible for any damage caused by the use of this script. Use it at your own risk.****
+# Grades Checker And Notifier API*
+## "Disclaimer" 
+****The author of this script is not responsible for any damage caused by the use of this script. Use it at your own risk.***
 
-# Grades checker And Notifier API
 ## Problem statement:
  I am a student at the Faculty of Science, Alexandria University (AUFS). The university has a website where students can check their grades. However, the website is not very user-friendly, and it requires students to log in every time they want to check their grades. This is a problem for me because I often forget to check my grades. That's when I decided to create a script that will check my grades for me and notify me when they are available. I also wanted to make the script easy to use, so I decided to create a **REST API** that can be used by anyone who wants to check their grades.
 
@@ -23,7 +23,7 @@ Once you log in, you will be redirected to the main page of the website. This pa
 
 **Grades page:**
 ![grades page](/assets/grades_page.jpeg)
-This is the page where the student can check their grades. The page contains a table for each semester, with the info about the courses the student has enrolled into as shown in the image above.
+This is the page where the students can check their grades. The page contains a table for each semester, with the info about the courses the student has enrolled into as shown in the image above.
 Please note that the website is in **Arabic**, and all the course names are in **Arabic**, I translated the site so anyone would understand the concept. So the API will send the grades in Arabic (as how you will see later) since **the website is in Arabic by default.**.
 
 ## Let me explain how to use the API:
@@ -87,7 +87,7 @@ https://www.scialex.org/S/your_token/Student/2018
         "error": "Error starting background process for {username}: $ is not a function"
     }
 ```
-- This error is caused by the cloud. Sometimes the image instance might not be completely ready at the moment of the call. **This is a known issue and I am working on fixing it**. However, you can just ignore it and recall the endpoint again and the API will work as expected.
+- This error started appearing after I deployed it to the cloud. Sometimes the image instance might not be completely ready at the moment of the call. **This is a known issue and I am working on fixing it**. However, you can just ignore it and resend the request again and the API will work as expected.
 
 I implemented the checking logic to check the **Appreciation** column, by default after you completed the course's survey, the grade for the course is **'P'** indicating that the grade is not revealed yet. Once the grade is revealed, it will be changed to **'A'** or **'B'** or any other grade. So I just check if the grade is 'P' or not. If it is not 'P', then the grade is revealed and I will send a message to the user with the revealed grades and the current CGPA.
 
@@ -113,9 +113,13 @@ DELETE /stop HTTP/1.1
  "message": "Grade checking service stopped for user {username}."
 }
 ```
-- The API will stop checking the grades and will send a message to the user with a message like this:
+- The API will stop checking the grades and will send a message to the user with some info about how many minutes he had subscribed to the service with the start and end times. The message would look like this:
 ```
 "Hello! You have successfully stopped the grades checker API. Thank you for using the grades checker API."
+Info:
+*Duration*: x minutes
+*Start date*: DD/MM/YYYY, HH/MM/SS (24-hour format)
+*End date*: DD/MM/YYYY, HH/MM/SS (24-hour format)
 ```
 - **The API will also delete the user and all their info from the database.**
 
