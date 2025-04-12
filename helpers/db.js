@@ -42,7 +42,6 @@ const connectDB = async () => {
   } catch (error) {
     console.error(`Error connecting to MongoDB Atlas: ${error.message}`);
     cachedConnection = null;
-    throw error;
   }
 };
 

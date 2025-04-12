@@ -52,7 +52,13 @@ app.get("/", baseLimiter, async (req, res) => {
   });
 });
 
+
+let cachedDocs = null;
+
 app.get("/docs", docsLimiter, async (req, res) => {
+try{
+  if (cachedDocs) return res.send(cachedDocs);
+
   const readmePath = path.join(__dirname, "README.md");
 
   fs.readFile(readmePath, "utf8", async (err, data) => {
@@ -62,7 +68,7 @@ app.get("/docs", docsLimiter, async (req, res) => {
     }
     const htmlContent = marked.parse(data);
 
-    res.send(`
+    cachedDocs = `
       <html>
         <head>
           <title>API Documentation</title>
@@ -141,8 +147,13 @@ app.get("/docs", docsLimiter, async (req, res) => {
           </div>
         </body>
       </html>
-    `);
+    `;
+    res.send(cachedDocs);
   });
+} catch (error) {
+  console.error("Error in /docs route:", error);
+  res.status(500).json({ error: "Failed to load documentation." });
+}
 });
 
 app.post(
