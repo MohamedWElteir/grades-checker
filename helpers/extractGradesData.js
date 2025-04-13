@@ -8,6 +8,7 @@ dotenv.config();
 async function extractGradesData($, username) {
   const pendingCourses = [];
   const revealedGrades = [];
+  const notPolledCourses = [];
   const resultsProcessor = {
     matchedCount: 0,
     unmatchedCount: 0,
@@ -20,8 +21,7 @@ async function extractGradesData($, username) {
   };
 
   try {
-    const labelPrefix = process.env.LABEL;
-    if (!labelPrefix) throw new Error("LABEL is not defined in the environment variables.");
+    const labelPrefix = "ContentPlaceHolder1_ContentPlaceHolder1_DataList1";
 
 
     const tables = $(`table[id^="${labelPrefix}_GridView1_"]`);
@@ -40,13 +40,23 @@ async function extractGradesData($, username) {
       const parsedRow = parseRecord(record, resultsProcessor);
       if (parsedRow) {
         
-        parsedRow.grade === 'P' ? pendingCourses.push(parsedRow) : revealedGrades.push(parsedRow);
+        // parsedRow.grade === 'P' ? pendingCourses.push(parsedRow) : revealedGrades.push(parsedRow);
+        switch (parsedRow.grade) {
+          case "P":
+            pendingCourses.push(parsedRow);
+            break;
+          case "إستبيان":
+            notPolledCourses.push(parsedRow);
+            break;
+          default:
+            revealedGrades.push(parsedRow);
+        }
       }
     }
     
 
     const sessions = await readUserSessions();
-    const userSession = sessions[username] || { lastKnownGrades: [] };
+    const userSession = sessions[username] || { lastKnownGrades: [], notPolledCourses: [] };
     
     const newGrades = revealedGrades.filter((grade) => {
       return !userSession.lastKnownGrades.some(
@@ -56,11 +66,14 @@ async function extractGradesData($, username) {
 
     if (newGrades.length > 0) {
       sessions[username] = {
-      lastKnownGrades: revealedGrades,
-      "CGPA": CGPA,
-    };
-      writeUserSessions(sessions);
+        lastKnownGrades: revealedGrades,
+        notPolledCourses: notPolledCourses.length > 0 ? notPolledCourses : [],
+        
+        "CGPA": CGPA,
+      };
     }
+    await writeUserSessions(sessions);
+
 
     console.log(
       `Matched: ${resultsProcessor.matchedCount}, Unmatched: ${resultsProcessor.unmatchedCount}`
@@ -70,6 +83,7 @@ async function extractGradesData($, username) {
       newGrades,
       pendingCourses,
       lastKnownGrades: revealedGrades,
+      notPolledCourses,
       CGPA,
     };
   } catch (error) {

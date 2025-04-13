@@ -7,6 +7,7 @@ async function readUserSessions() {
     userSessions.forEach((session) => {
       sessions[session.username] = {
         lastKnownGrades: session.lastKnownGrades,
+        notPolledCourses: session.notPolledCourses,
         CGPA: session.CGPA,
       };
     });
@@ -27,6 +28,7 @@ async function writeUserSessions(sessions) {
         {
           $set: {
             lastKnownGrades: session.lastKnownGrades,
+            notPolledCourses: session.notPolledCourses,
             CGPA: session.CGPA,
           },
         },

@@ -24,7 +24,7 @@ async function sendSMS(to, grades, CGPA) {
 }
 
 async function sendWhatsapp(to, messageParams) {
-  const messageBeginning = "*Hey there! This is the WhatsApp bot for the grades checker!* \n";
+  const messageBeginning = "*Hey there! This is the WhatsApp bot of the grades checker API!* \n";
  const finalMessage = messageBeginning + messageParams;
   try {
     const message = await twilioClient.messages.create({
