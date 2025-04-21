@@ -39,8 +39,6 @@ async function extractGradesData($, username) {
     for (const record of records) {
       const parsedRow = parseRecord(record, resultsProcessor);
       if (parsedRow) {
-        
-        // parsedRow.grade === 'P' ? pendingCourses.push(parsedRow) : revealedGrades.push(parsedRow);
         switch (parsedRow.grade) {
           case "P":
             pendingCourses.push(parsedRow);

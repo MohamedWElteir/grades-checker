@@ -35,7 +35,7 @@ async function makeGetRequest(token, type='text') {
     if (response.status === 200) {
       if (!response.data) throw new Error("Response is empty");
         const html = response.data;
-        return type === "html" ? pageToHTML(html) : html;
+        return type === "html" ? await pageToHTML(html) : html;
     }
   } catch (error) {
     console.error(`Failed to make get request:`, error);
