@@ -2,12 +2,22 @@
 ## "Disclaimer" 
 ****The author of this script is not responsible for any damage caused by the use of this script. Use it at your own risk.***
 
-## Problem statement:
+**Sections:**
+- [Problem Statement](#problem-statement)
+- [Screenshots](#screenshots)
+- [How to Use the API](#how-to-use-the-api)
+- [Token Retrieval](#token-retrieval)
+- [Key Features](#key-features)
+- [System Architecture](#system-architecture)
+- [Hosting](#hosting)
+- [Final Words](#final-words)
+
+## Problem statement <a name="problem-statement"></a>
  I am a student at the Faculty of Science, Alexandria University (AUFS). The university has a website where students can check their grades. However, the website is not very user-friendly, and it requires students to log in every time they want to check their grades. This is a problem for me because I often forget to check my grades. That's when I decided to create a script that will check my grades for me and notify me when they are available. I also wanted to make the script easy to use, so I decided to create a **REST API** that can be used by anyone who wants to check their grades.
 
 **Quick note:** Make sure you are calling the API from a computer not using a mobile app because it does not work there and I don't know why. Use a tool like Postman as this tool is tested and it's working with it.
 
-## Screenshots:
+## Screenshots: <a name="screenshots"></a>
 **Login page:**
 ![login page](/assets/login_page.jpeg)
 This is the login page of the website.
@@ -26,7 +36,7 @@ Once you log in, you will be redirected to the main page of the website. This pa
 This is the page where the students can check their grades. The page contains a table for each semester, with the info about the courses the student has enrolled into as shown in the image above.
 Please note that the website is in **Arabic**, and all the course names are in **Arabic**, I translated the site so anyone would understand the concept. So the API will send the grades in Arabic (as how you will see later) since **the website is in Arabic by default.**.
 
-## Let me explain how to use the API:
+## Let me explain how to use the API: <a name="how-to-use-the-api"></a>
 
 1. You just need to call the **/start** endpoint with the following parameters:
     ```json
@@ -61,7 +71,7 @@ Please note that the website is in **Arabic**, and all the course names are in *
     }
 ```
 
-To get the token, just follow these steps:
+#### To get the token, just follow these steps: <a name="token-retrieval"></a>
 - Open the website in your browser and log in to your account.
 - Once logged in, the url should look like this:
 ```bash
@@ -76,6 +86,9 @@ https://www.scialex.org/S/your_token/Student/2018
 - The API will check if the user is already registered in the database. If not, it will register the user and store the token in the database and send a message via WhatsApp to the user with a message like this:
 ```
 "Hello! You have successfully registered to the grades checker API. You will be notified via SMS when your grades are available."
+*Your username*: 'your_username'
+*Your Pending Courses*: 'List of all pending courses'
+*Your current CGPA*: 'your_current_cgpa'
 ```
 - The API will regularly check the grades every **9 minutes**, and that was achieved by using cron-jobs, and if any grades had been revealed, it will send a message via SMS to the user with the revealed grades and the current CGPA. The message will look like this:
 ![notification message](/assets/grades_notification.jpg)
@@ -113,6 +126,7 @@ DELETE /stop HTTP/1.1
  "message": "Grade checking service stopped for user {username}."
 }
 ```
+
 - The API will stop checking the grades and will send a message to the user with some info about how many minutes he had subscribed to the service with the start and end times. The message would look like this:
 ```
 "Hello! You have successfully stopped the grades checker API. Thank you for using the grades checker API."
@@ -131,10 +145,11 @@ Info:
 - The API will also send a message to the user if the token expires and the user would need to log in again and get a new token.
 - The API will also notify users when their grades are available via **SMS** and **WhatsApp**.
 
-# Additional Features:
+# Additional Features: 
 I implemented a rate limiting feature to prevent abuse of the API. The API will limit the number of requests to **100 requests every 15 minutes**. If the user exceeds this limit, the API will return a **429 Too Many Requests** error.
-
-# Hosting:
+# System Architecture: <a name="system-architecture"></a>
+![System Architecture](./assets/Grades%20Checker%20API%20Architecture.svg)
+# Hosting: <a name="hosting"></a>
 Well, I needed to host the API somewhere, so based on my use case, I decided to use **GCP**. I used the **Google App Engine** to host the API. The API is hosted on a free tier, as the API is not very heavy and does not require a lot of resources. But if the API is used by a lot of users, I would need to upgrade the plan, and I don't think I will do that. So the solution for you would be to either:
  
 1. **Host it on your own server (if you have one).**
@@ -142,5 +157,5 @@ Well, I needed to host the API somewhere, so based on my use case, I decided to 
 3. **Use a container service like Docker and host it on your own machine (which I highly recommend).**
 4. **Use a cloud service like AWS or Azure (which I don't recommend as it is expensive).**
 
-# Final words:
+# Final words: <a name="final-words"></a>
 In the end, this is a script I did for fun and because I am lazy and I don't want to check my grades every time. **I am not responsible for any damage caused by the use of this script. Use it at your own risk.** I hope you find it useful.

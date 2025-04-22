@@ -80,9 +80,9 @@ async function startBackgroundProcess(username, phoneNumber, token) {
    await saveUserProcess(username, phoneNumber, initialGradesData, token);
   sendWhatsapp(
     phoneNumber,
-    `You have successfully started the grade checking service. You will be notified when new grades are available via SMS, your pending courses are:\n ${initialGradesData.pendingCourses
+    `You have successfully started the grade checking service. You will be notified when new grades are available via SMS.\n*Your username:* *${username}*\n*Your pending courses are:*\n ${initialGradesData.pendingCourses
       .map((course) => course.courseName)
-      .join("\n")}\n Current CGPA: *${initialGradesData.CGPA}*`
+      .join("\n")}\n*Your current CGPA:* *${initialGradesData.CGPA}*`
   ).catch((err) => console.error("Error sending WhatsApp message:", err));
 
    if (initialGradesData.notPolledCourses.length > 0) {
