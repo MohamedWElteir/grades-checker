@@ -5,7 +5,6 @@ async function pageToHTML(pageAsString) {
   return content;
 }
 
-
 module.exports = {
-    pageToHTML,
-}
+  pageToHTML,
+};

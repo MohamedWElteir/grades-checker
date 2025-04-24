@@ -12,25 +12,27 @@ const {
 } = require("./userListHandler");
 const cron = require("node-cron");
 
-cron.schedule("*/9 * * * *", async () => { // every 9 minutes
+cron.schedule("*/9 * * * *", async () => {
+  // every 9 minutes
   console.log("Running grade update check...");
   const users = await getAllActiveProcesses();
-  if(!users || users.length === 0) return console.log("No active processes found.");
+  if (!users || users.length === 0)
+    return console.log("No active processes found.");
   console.log(`Running checks for ${users.length} active processes.`);
   for (const user of users) checkForUpdates(user);
-  
 });
 
 async function checkForUpdates(user) {
   try {
-    const { username, phoneNumber, lastGradesData, token} = user;
+    const { username, phoneNumber, lastGradesData, token } = user;
     const newFetch = await makeGetRequest(token, "html");
     const valid = await validatePage(newFetch);
     if (!valid) {
       await deleteUserProcess(username);
-      sendWhatsapp(phoneNumber, "Token expired. Session terminated. Restart with /start").catch(
-        console.error
-      );
+      sendWhatsapp(
+        phoneNumber,
+        "Token expired. Session terminated. Restart with /start"
+      ).catch(console.error);
       return;
     }
 
@@ -64,44 +66,48 @@ async function checkForUpdates(user) {
   }
 }
 async function startBackgroundProcess(username, phoneNumber, token) {
- const existingProcess = await getUserProcess(username);
- if (existingProcess) return { status: 400, message: "User already has an active process" };
- if(await isTokenInUse(token)) return { status: 400, message: "Token already in use" };
- try {
-   const initialFetch = await makeGetRequest(token, "html");
-   const valid = await validatePage(initialFetch);
-   if (!valid) return { status: 400, message: "Invalid or expired token." };
-   
-   
-   const initialGradesData = await extractGradesData(initialFetch, username);
-   if(initialGradesData.pendingCourses.length === 0) return { status: 400, message: "No pending courses." };
-   
-   console.log("Initial grades data:", initialGradesData);
-   await saveUserProcess(username, phoneNumber, initialGradesData, token);
-  sendWhatsapp(
-    phoneNumber,
-    `You have successfully started the grade checking service. You will be notified when new grades are available via SMS.\n*Your username:* *${username}*\n*Your pending courses are:*\n ${initialGradesData.pendingCourses
-      .map((course) => course.courseName)
-      .join("\n")}\n*Your current CGPA:* *${initialGradesData.CGPA}*`
-  ).catch((err) => console.error("Error sending WhatsApp message:", err));
+  const existingProcess = await getUserProcess(username);
+  if (existingProcess)
+    return { status: 400, message: "User already has an active process" };
+  if (await isTokenInUse(token))
+    return { status: 400, message: "Token already in use" };
+  try {
+    const initialFetch = await makeGetRequest(token, "html");
+    const valid = await validatePage(initialFetch);
+    if (!valid) return { status: 400, message: "Invalid or expired token." };
 
-   if (initialGradesData.notPolledCourses.length > 0) {
+    const initialGradesData = await extractGradesData(initialFetch, username);
+    if (initialGradesData.pendingCourses.length === 0)
+      return { status: 400, message: "No pending courses." };
+
+    console.log("Initial grades data:", initialGradesData);
+    await saveUserProcess(username, phoneNumber, initialGradesData, token);
+    sendWhatsapp(
+      phoneNumber,
+      `You have successfully started the grade checking service. You will be notified when new grades are available via SMS.\n*Your username:* *${username}*\n*Your pending courses are:*\n ${initialGradesData.pendingCourses
+        .map((course) => course.courseName)
+        .join("\n")}\n*Your current CGPA:* *${initialGradesData.CGPA}*`
+    ).catch((err) => console.error("Error sending WhatsApp message:", err));
+
+    if (initialGradesData.notPolledCourses.length > 0) {
       sendWhatsapp(
         phoneNumber,
-        `You have ${initialGradesData.notPolledCourses.length} courses that are not polled yet:\n ${initialGradesData.notPolledCourses
+        `You have ${
+          initialGradesData.notPolledCourses.length
+        } courses that are not polled yet:\n ${initialGradesData.notPolledCourses
           .map((course) => course.courseName)
           .join("\n")}`
       ).catch((err) => console.error("Error sending WhatsApp message:", err));
     }
-   
-   return { status: 201, message: "Grade checking service started" };
- } catch (error) {
-   console.error(
-     `Error starting background process for ${username}:`,
-     error.message
-   );
-   return { status: 500, message: `Internal error: ${error.message}` };
- }
+
+    return { status: 201, message: "Grade checking service started" };
+  } catch (error) {
+    console.error(
+      `Error starting background process for ${username}:`,
+      error.message
+    );
+    return { status: 500, message: `Internal error: ${error.message}` };
+  }
 }
 
 const formatDate = (date) => {
@@ -111,30 +117,26 @@ const formatDate = (date) => {
   }).format(new Date(date));
 };
 
-async function stopBackgroundProcess(username) { 
- const processInfo = await getUserProcess(username);
- if (!processInfo) return false;
+async function stopBackgroundProcess(username) {
+  const processInfo = await getUserProcess(username);
+  if (!processInfo) return false;
   const runtime = new Date() - new Date(processInfo.startTime);
   const info = {
     runtime: `${Math.round(runtime / (1000 * 60))} minutes`,
     startTime: formatDate(processInfo.startTime),
     endTime: formatDate(new Date()),
   };
-    console.log(`Process statistics for ${username}:`, info);
+  console.log(`Process statistics for ${username}:`, info);
 
-     await deleteAllUserInstance(username);
-     sendWhatsapp(
-       processInfo.phoneNumber,
-       `Grade checking service has been stopped. \nInfo:\n${Object.entries(info)
-         .map(([key, value]) => `*${key}*: ${value}`)
-         .join("\n")}`
-     ).catch((err) => console.error("Error sending WhatsApp message:", err));
-    return true;
-  
-  
+  await deleteAllUserInstance(username);
+  sendWhatsapp(
+    processInfo.phoneNumber,
+    `Grade checking service has been stopped. \nInfo:\n${Object.entries(info)
+      .map(([key, value]) => `*${key}*: ${value}`)
+      .join("\n")}`
+  ).catch((err) => console.error("Error sending WhatsApp message:", err));
+  return true;
 }
-
-
 
 module.exports = {
   startBackgroundProcess,

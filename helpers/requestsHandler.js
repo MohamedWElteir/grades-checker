@@ -5,13 +5,13 @@
  */
 
 const axios = require("axios");
-const {pageToHTML} = require("./htmlProcessor");
-async function makeGetRequest(token, type='text') {
-    /** 
-     * Make a get request to the student result page
-     * @param {string} token - The token of the student
-     * @param {string} type - The type of response to return. Default is text
-     */
+const { pageToHTML } = require("./htmlProcessor");
+async function makeGetRequest(token, type = "text") {
+  /**
+   * Make a get request to the student result page
+   * @param {string} token - The token of the student
+   * @param {string} type - The type of response to return. Default is text
+   */
   try {
     const url = `https://www.scialex.org/F/${token}/2018/Student/Results.aspx`;
 
@@ -40,10 +40,10 @@ async function makeGetRequest(token, type='text') {
 
     if (response.status === 200) {
       if (!response.data) throw new Error("Response is empty");
-        const html = response.data;
-        return type === "html" ? await pageToHTML(html) : html;
-    }
-    else throw new Error(`Request failed with status code: ${response.status}.`);
+      const html = response.data;
+      return type === "html" ? await pageToHTML(html) : html;
+    } else
+      throw new Error(`Request failed with status code: ${response.status}.`);
   } catch (error) {
     console.error(`Failed to make get request:`, error);
     throw error;

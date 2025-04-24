@@ -2,7 +2,7 @@ const UserSession = require("../data/userSessionSchema");
 
 async function readUserSessions() {
   try {
-    const userSessions = await UserSession.find(); 
+    const userSessions = await UserSession.find();
     const sessions = {};
     userSessions.forEach((session) => {
       sessions[session.username] = {
@@ -17,7 +17,6 @@ async function readUserSessions() {
     throw error;
   }
 }
-
 
 async function writeUserSessions(sessions) {
   try {
