@@ -7,8 +7,8 @@ const {
   getUserProcess,
   deleteUserProcess,
   getAllActiveProcesses,
-  deleteUserSeccion,
   deleteAllUserInstance,
+  isTokenInUse,
 } = require("./userListHandler");
 const cron = require("node-cron");
 
@@ -66,7 +66,7 @@ async function checkForUpdates(user) {
 async function startBackgroundProcess(username, phoneNumber, token) {
  const existingProcess = await getUserProcess(username);
  if (existingProcess) return { status: 400, message: "User already has an active process" };
-
+ if(await isTokenInUse(token)) return { status: 400, message: "Token already in use" };
  try {
    const initialFetch = await makeGetRequest(token, "html");
    const valid = await validatePage(initialFetch);
