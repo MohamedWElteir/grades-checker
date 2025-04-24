@@ -20,13 +20,18 @@ async function deleteUserProcess(username) {
   return await UserProcess.deleteOne({ username });
 }
 
-async function deleteUserSeccion(username) {
+async function deleteUserSession(username) {
   return await UserSchema.deleteOne({ username });
 }
 
 async function deleteAllUserInstance(username) {
   await deleteUserProcess(username);
-  await deleteUserSeccion(username);
+  await deleteUserSession(username);
+}
+
+async function isTokenInUse(token) {
+  const user = await UserProcess.findOne({ token });
+  return !!user; 
 }
 
 module.exports = {
@@ -34,6 +39,7 @@ module.exports = {
   getUserProcess,
   deleteUserProcess,
   getAllActiveProcesses,
-  deleteUserSeccion,
+  deleteUserSession,
   deleteAllUserInstance,
+  isTokenInUse,
 };

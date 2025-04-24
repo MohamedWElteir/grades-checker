@@ -7,8 +7,8 @@ const {
   getUserProcess,
   deleteUserProcess,
   getAllActiveProcesses,
-  deleteUserSeccion,
   deleteAllUserInstance,
+  isTokenInUse,
 } = require("./userListHandler");
 const cron = require("node-cron");
 
@@ -66,7 +66,7 @@ async function checkForUpdates(user) {
 async function startBackgroundProcess(username, phoneNumber, token) {
  const existingProcess = await getUserProcess(username);
  if (existingProcess) return { status: 400, message: "User already has an active process" };
-
+ if(await isTokenInUse(token)) return { status: 400, message: "Token already in use" };
  try {
    const initialFetch = await makeGetRequest(token, "html");
    const valid = await validatePage(initialFetch);
@@ -80,9 +80,9 @@ async function startBackgroundProcess(username, phoneNumber, token) {
    await saveUserProcess(username, phoneNumber, initialGradesData, token);
   sendWhatsapp(
     phoneNumber,
-    `You have successfully started the grade checking service. You will be notified when new grades are available via SMS, your pending courses are:\n ${initialGradesData.pendingCourses
+    `You have successfully started the grade checking service. You will be notified when new grades are available via SMS.\n*Your username:* *${username}*\n*Your pending courses are:*\n ${initialGradesData.pendingCourses
       .map((course) => course.courseName)
-      .join("\n")}\n Current CGPA: *${initialGradesData.CGPA}*`
+      .join("\n")}\n*Your current CGPA:* *${initialGradesData.CGPA}*`
   ).catch((err) => console.error("Error sending WhatsApp message:", err));
 
    if (initialGradesData.notPolledCourses.length > 0) {
