@@ -31,7 +31,7 @@ async function deleteAllUserInstance(username) {
 
 async function isTokenInUse(token) {
   const user = await UserProcess.findOne({ token });
-  return !!user; 
+  return !!user;
 }
 
 module.exports = {

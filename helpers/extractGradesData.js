@@ -1,9 +1,12 @@
 const dotenv = require("dotenv");
 const connectDB = require("./db");
-const { readUserSessions, writeUserSessions } = require("./userSessionsHandler");
+const {
+  readUserSessions,
+  writeUserSessions,
+} = require("./userSessionsHandler");
 dotenv.config();
 
- connectDB();
+connectDB();
 
 async function extractGradesData($, username) {
   const pendingCourses = [];
@@ -23,18 +26,19 @@ async function extractGradesData($, username) {
   try {
     const labelPrefix = "ContentPlaceHolder1_ContentPlaceHolder1_DataList1";
 
-
     const tables = $(`table[id^="${labelPrefix}_GridView1_"]`);
     const numberOfTables = tables.length;
 
-    if (numberOfTables === 0) console.error("No grade tables found in the HTML content.");
+    if (numberOfTables === 0)
+      console.error("No grade tables found in the HTML content.");
 
     const lastTableIndex = numberOfTables - 1;
     const gridViewId = `${labelPrefix}_GridView1_${lastTableIndex}`; // Most recent courses table
     const formViewId = `${labelPrefix}_FormView1_${lastTableIndex}_CGPALabel`; // Corresponding CGPA on that same table
     const CGPA = $(`#${formViewId}`).text().trim();
     const tableElement = $(`#${gridViewId}`);
-    if (tableElement.length === 0) console.warn(`Table with id '${gridViewId}' not found.`);
+    if (tableElement.length === 0)
+      console.warn(`Table with id '${gridViewId}' not found.`);
     const records = processTableElement(tableElement);
     for (const record of records) {
       const parsedRow = parseRecord(record, resultsProcessor);
@@ -51,11 +55,13 @@ async function extractGradesData($, username) {
         }
       }
     }
-    
 
     const sessions = await readUserSessions();
-    const userSession = sessions[username] || { lastKnownGrades: [], notPolledCourses: [] };
-    
+    const userSession = sessions[username] || {
+      lastKnownGrades: [],
+      notPolledCourses: [],
+    };
+
     const newGrades = revealedGrades.filter((grade) => {
       return !userSession.lastKnownGrades.some(
         (g) => g.courseCode === grade.courseCode && g.grade === grade.grade
@@ -66,12 +72,11 @@ async function extractGradesData($, username) {
       sessions[username] = {
         lastKnownGrades: revealedGrades,
         notPolledCourses: notPolledCourses.length > 0 ? notPolledCourses : [],
-        
-        "CGPA": CGPA,
+
+        CGPA: CGPA,
       };
     }
     await writeUserSessions(sessions);
-
 
     console.log(
       `Matched: ${resultsProcessor.matchedCount}, Unmatched: ${resultsProcessor.unmatchedCount}`
@@ -91,11 +96,11 @@ async function extractGradesData($, username) {
 }
 
 function parseRecord(record, resultsProcessor) {
- const regex1 =
-   /(\d{9})\s+(\d{5})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F|W|I)\s+(\d\.\d{2})\s+(\d+)\s+(\d+\.\d{2})/;
+  const regex1 =
+    /(\d{9})\s+(\d{5})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F|W|I)\s+(\d\.\d{2})\s+(\d+)\s+(\d+\.\d{2})/;
 
- const regex2 =
-   /(\d{9})\s+((?:\S+\s*){1,3})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F|W|I)\s+(\d\.\d{2})\s+(\d+)\s+(\d\.\d{2})/;
+  const regex2 =
+    /(\d{9})\s+((?:\S+\s*){1,3})\s+(.+?)\s+([A-D][+-]?|P|حذف|إستبيان|F|W|I)\s+(\d\.\d{2})\s+(\d+)\s+(\d\.\d{2})/;
   let match = record.match(regex1);
   if (match) {
     try {
@@ -178,7 +183,8 @@ function processTableElement(tableElement) {
       recordLines.push(line);
       i++;
 
-      while (i < lines.length && !/^\d{9}/.test(lines[i])) recordLines.push(lines[i++]);
+      while (i < lines.length && !/^\d{9}/.test(lines[i]))
+        recordLines.push(lines[i++]);
       let record = recordLines.join(" ").trim();
       record = record.replace(/(\d{9})(\d{5}|\D+)/, "$1 $2");
 

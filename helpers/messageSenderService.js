@@ -8,7 +8,10 @@ const twilioClient = twilio(
 
 async function sendSMS(to, grades, CGPA) {
   const messageBody = grades
-    .map((grade) => `Course: ${grade.courseName}\nGrade: ${grade.grade}\nCGPA: ${CGPA}`)
+    .map(
+      (grade) =>
+        `Course: ${grade.courseName}\nGrade: ${grade.grade}\nCGPA: ${CGPA}`
+    )
     .join("\n");
 
   try {
@@ -24,8 +27,9 @@ async function sendSMS(to, grades, CGPA) {
 }
 
 async function sendWhatsapp(to, messageParams) {
-  const messageBeginning = "*Hey there! This is the WhatsApp bot of the grades checker API!* \n";
- const finalMessage = messageBeginning + messageParams;
+  const messageBeginning =
+    "*Hey there! This is the WhatsApp bot of the grades checker API!* \n";
+  const finalMessage = messageBeginning + messageParams;
   try {
     const message = await twilioClient.messages.create({
       body: finalMessage,
@@ -36,7 +40,6 @@ async function sendWhatsapp(to, messageParams) {
   } catch (error) {
     console.error(`Failed to send Whatsapp message to ${to}:`, error);
   }
-  
 }
 
 module.exports = {
