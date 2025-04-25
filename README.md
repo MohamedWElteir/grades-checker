@@ -25,11 +25,11 @@
 
 **Login page:**
 ![login page](/assets/login_page.jpeg)
-This is the login page of the website.
+*The login page of the website.*
 
 **Main page:**
 ![main webpage screen](/assets/main_page.jpeg)
-Once you log in, you will be redirected to the main page of the website. This page contains all the information about the student:
+*Once you log in, you will be redirected to the main page of the website. This page contains all the information about the student:*
 
 - The student's full name
 - The student's department
@@ -39,7 +39,9 @@ Once you log in, you will be redirected to the main page of the website. This pa
 
 **Grades page:**
 ![grades page](/assets/grades_page.jpeg)
-This is the page where the students can check their grades. The page contains a table for each semester, with the info about the courses the student has enrolled into as shown in the image above.
+*This is the page where the students can check their grades.*
+
+The page contains a table for each semester, with the info about the courses the student has enrolled into as shown in the image above.
 Please note that the website is in **Arabic**, and all the course names are in **Arabic**, I translated the site so anyone would understand the concept. So the API will send the grades in Arabic (as how you will see later) since **the website is in Arabic by default.**.
 
 ## Let me explain how to use the API <a name="how-to-use-the-api"></a>
