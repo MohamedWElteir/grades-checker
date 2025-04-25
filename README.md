@@ -56,7 +56,7 @@ Please note that the website is in **Arabic**, and all the course names are in *
     ```
 
     - **username** (**string**): your username (the one you use to log in to the website, however, you can use anything as a username, it will be used to identify the user in the database)
-    - **phoneNumber** (**string**): your phone number (the one you use to receive the notification). **Make sure it is in [<u>valid WhatsApp phone number format</u>](https://faq.whatsapp.com/1294841057948784).**
+    - **phoneNumber** (**string**): your phone number (the one you use to receive the notification). **Make sure it is in <a href="https://faq.whatsapp.com/1294841057948784" target="_blank"><u>valid WhatsApp phone number format</u></a>.**
     - **token** (**string**): I was lazy in the implementation of the API, so you will just need to log in to the website once and copy the token from the url. As this approach was the easiest for me to implement. (**I will explain how to get the token in the next section**)
 
 **Example call**:
