@@ -55,19 +55,19 @@ app.get("/", baseLimiter, async (req, res) => {
 let cachedDocs = null;
 
 app.get("/docs", docsLimiter, async (req, res) => {
-  try {
-    if (cachedDocs) return res.send(cachedDocs);
+try{
+  if (cachedDocs) return res.send(cachedDocs);
 
-    const readmePath = path.join(__dirname, "README.md");
+  const readmePath = path.join(__dirname, "README.md");
 
-    fs.readFile(readmePath, "utf8", async (err, data) => {
-      if (err) {
-        console.error("Error reading README.md:", err);
-        return res.status(500).json({ error: "Failed to load documentation." });
-      }
-      const htmlContent = marked.parse(data);
+  fs.readFile(readmePath, "utf8", async (err, data) => {
+    if (err) {
+      console.error("Error reading README.md:", err);
+      return res.status(500).json({ error: "Failed to load documentation." });
+    }
+    const htmlContent = marked.parse(data);
 
-      cachedDocs = `
+    cachedDocs = `
       <html>
         <head>
           <title>API Documentation</title>
@@ -147,12 +147,12 @@ app.get("/docs", docsLimiter, async (req, res) => {
         </body>
       </html>
     `;
-      res.send(cachedDocs);
-    });
-  } catch (error) {
-    console.error("Error in /docs route:", error);
-    res.status(500).json({ error: "Failed to load documentation." });
-  }
+    res.send(cachedDocs);
+  });
+} catch (error) {
+  console.error("Error in /docs route:", error);
+  res.status(500).json({ error: "Failed to load documentation." });
+}
 });
 
 app.post(
@@ -169,7 +169,8 @@ app.post(
       });
     } catch (error) {
       console.error(error);
-      res.status(500).json({
+      res.status(500)
+        .json({
         error: "An error occurred while starting the background process.",
       });
     }

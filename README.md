@@ -175,7 +175,8 @@ I implemented a rate limiting feature to prevent abuse of the API. The API will 
 
 ## System Overview <a name="system-overview"></a>
 
-![Design](./assets/Grades_Checker_API_Architecture.svg)
+![Folders](./assets/system-overview-folders.svg)
+![UML](./assets/system-overview-uml.svg)
 
 ## Hosting <a name="hosting"></a>
 
