@@ -1,8 +1,8 @@
 const dotenv = require("dotenv");
 const connectDB = require("./db");
 const {
-  readUserSessions,
-  writeUserSessions,
+  getUserSession,
+  saveUserSession,
 } = require("./userSessionsHandler");
 dotenv.config();
 
@@ -56,8 +56,8 @@ async function extractGradesData($, username) {
       }
     }
 
-    const sessions = await readUserSessions();
-    const userSession = sessions[username] || {
+    const session = await getUserSession(username);
+    let userSession = session || {
       lastKnownGrades: [],
       notPolledCourses: [],
     };
@@ -69,14 +69,14 @@ async function extractGradesData($, username) {
     });
 
     if (newGrades.length > 0) {
-      sessions[username] = {
+      userSession = {
         lastKnownGrades: revealedGrades,
         notPolledCourses: notPolledCourses.length > 0 ? notPolledCourses : [],
 
         CGPA: CGPA,
       };
     }
-    await writeUserSessions(sessions);
+    await saveUserSession(username, userSession);
 
     console.log(
       `Matched: ${resultsProcessor.matchedCount}, Unmatched: ${resultsProcessor.unmatchedCount}`

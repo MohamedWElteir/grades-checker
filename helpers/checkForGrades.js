@@ -5,15 +5,13 @@ const { validatePage } = require("./validators");
 const {
   saveUserProcess,
   getUserProcess,
-  deleteUserProcess,
   getAllActiveProcesses,
   deleteAllUserInstance,
   isTokenInUse,
 } = require("./userListHandler");
 const cron = require("node-cron");
 
-cron.schedule("*/9 * * * *", async () => {
-  // every 9 minutes
+cron.schedule("*/9 * * * *", async () => { // every 9 minutes
   console.log("Running grade update check...");
   const users = await getAllActiveProcesses();
   if (!users || users.length === 0)
@@ -28,7 +26,7 @@ async function checkForUpdates(user) {
     const newFetch = await makeGetRequest(token, "html");
     const valid = await validatePage(newFetch);
     if (!valid) {
-      await deleteUserProcess(username);
+      await deleteAllUserInstance(username);
       sendWhatsapp(
         phoneNumber,
         "Token expired. Session terminated. Restart with /start"
@@ -52,7 +50,7 @@ async function checkForUpdates(user) {
     }
 
     if (extractedGradesData.pendingCourses.length === 0) {
-      await deleteUserProcess(username);
+      await deleteAllUserInstance(username);
       sendWhatsapp(
         phoneNumber,
         `All grades revealed. Service stopped. Thank you for using the service.\n*CGPA:* ${extractedGradesData.CGPA}.`
@@ -66,11 +64,12 @@ async function checkForUpdates(user) {
   }
 }
 async function startBackgroundProcess(username, phoneNumber, token) {
-  const existingProcess = await getUserProcess(username);
-  if (existingProcess)
-    return { status: 400, message: "User already has an active process" };
-  if (await isTokenInUse(token))
-    return { status: 400, message: "Token already in use" };
+
+  if (!/^\+201[0125]\d{8}$/.test(phoneNumber)) return { status: 400, message: "Invalid phone number format. Use +201XXXXXXXXX" };
+  if (await getUserProcess(username)) return { status: 400, message: "User already has an active process" };
+  if (await isTokenInUse(token)) return { status: 400, message: "Token already in use" };
+
+
   try {
     const initialFetch = await makeGetRequest(token, "html");
     const valid = await validatePage(initialFetch);
