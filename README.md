@@ -102,8 +102,10 @@ https://www.scialex.org/S/your_token/Student/2018
 *Your current CGPA*: 'your_current_cgpa'
 ```
 
-- The API will regularly check the grades every **9 minutes**, and that was achieved by using cron-jobs, and if any grades had been revealed, it will send a message via SMS to the user with the revealed grades and the current CGPA. The message will look like this:
+The API will regularly check the grades every **9 minutes**, and that was achieved by using cron-jobs, and if any grades had been revealed, it will send a message via SMS to the user with the revealed grades and the current CGPA. The message will look like this:
+
 ![notification message](/assets/grades_notification.jpg)
+*Notification sent as an SMS message.*
 
 **Sometimes, you would get a response like this:**
 
