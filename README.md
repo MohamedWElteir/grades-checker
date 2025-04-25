@@ -162,7 +162,7 @@ Info:
 
 - **The API will also delete the user and all their info from the database.**
 
-## Key Features
+## Key Features <a name="key-features"></a>
 
 - The API supports sending notifications via SMS and WhatsApp when grades are available.
 - Users can register and unregister from the grades checking service easily.
