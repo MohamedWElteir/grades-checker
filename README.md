@@ -11,7 +11,7 @@
 - [How to Use the API](#how-to-use-the-api)
 - [Token Retrieval](#token-retrieval)
 - [Key Features](#key-features)
-- [System Architecture](#system-architecture)
+- [System Overview](#system-overview)
 - [Hosting](#hosting)
 - [Final Words](#final-words)
 
@@ -173,9 +173,10 @@ Info:
 
 I implemented a rate limiting feature to prevent abuse of the API. The API will limit the number of requests to **100 requests every 15 minutes**. If the user exceeds this limit, the API will return a **429 Too Many Requests** error.
 
-## System Overview <a name="system-architecture"></a>
+## System Overview <a name="system-overview"></a>
 
-![System Architecture](./assets/Grades%20Checker%20API%20Architecture.svg)
+![Folders](./assets/system-overview-folders.svg)
+![UML](./assets/system-overview-uml.svg)
 
 ## Hosting <a name="hosting"></a>
 
