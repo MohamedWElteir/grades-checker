@@ -184,7 +184,7 @@ I implemented a rate limiting feature to prevent abuse of the API. The API will 
 
 ## Hosting <a name="hosting"></a>
 
-Well, I needed to host the API somewhere, so based on my use case, I decided to use **<a href="https://cloud.google.com/" target="_blank">GCP</a>**. I used the **<a href="https://cloud.google.com/appengine" target="_blank">Google App Engine</a>** to host the API. The API is hosted on a free tier, as the API is not very heavy and does not require a lot of resources. But if the API is used by a lot of users, I would need to upgrade the plan, and I don't think I will do that. So the solution for you would be to either:
+Well, I needed to host the API somewhere, so based on my use case, I decided to use **<a href="https://railway.app/">Railway</a>**. The API is hosted on a free tier, as the API is not very heavy and does not require a lot of resources. But if the API is used by a lot of users, I would need to upgrade the plan, and I don't think I will do that. So the solution for you would be to either:
 
 1. **Host it on your own server (if you have one).**
 2. **Use a free hosting service like Heroku, Railway or Render.**
