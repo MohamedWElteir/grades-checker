@@ -44,9 +44,9 @@ app.get("/", baseLimiter, async (req, res) => {
     message:
       "Welcome to the Grade Checker API! An API developed by @MohamedWElteir",
     routes: {
-      start: "/start",
-      end: "/end",
-      docs: "/docs",
+      GET: "/docs",
+      POST: "/start",
+      DELETE: "/end",
     },
     repo: `https://github.com/MohamedWElteir/grades-checker`,
   });
@@ -171,7 +171,7 @@ app.post(
       console.error(error);
       res.status(500)
         .json({
-        error: "An error occurred while starting the background process.",
+        error: `An error occurred while starting the background process: ${error}`,
       });
     }
   }

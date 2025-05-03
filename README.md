@@ -19,17 +19,17 @@
 
  I am a student at the Faculty of Science, Alexandria University (AUFS). The university has a website where students can check their grades. However, the website is not very user-friendly, and it requires students to log in every time they want to check their grades. This is a problem for me because I often forget to check my grades. That's when I decided to create a script that will check my grades for me and notify me when they are available. I also wanted to make the script easy to use, so I decided to create a **REST API** that can be used by anyone who wants to check their grades.
 
-**Quick note:** Make sure you are calling the API from a computer not using a mobile app because it does not work there and I don't know why. Use a tool like Postman as this tool is tested and it's working with it.
+**Quick note:** Make sure you are calling the API from a computer not using a mobile app because it does not work there. Use a tool like Postman as this tool is tested and it's working with it.
 
 ## Screenshots <a name="screenshots"></a>
 
 **Login page:**
 ![login page](/assets/login_page.jpeg)
-This is the login page of the website.
+*The login page of the website.*
 
 **Main page:**
 ![main webpage screen](/assets/main_page.jpeg)
-Once you log in, you will be redirected to the main page of the website. This page contains all the information about the student:
+*Once you log in, you will be redirected to the main page of the website. This page contains all the information about the student:*
 
 - The student's full name
 - The student's department
@@ -39,7 +39,9 @@ Once you log in, you will be redirected to the main page of the website. This pa
 
 **Grades page:**
 ![grades page](/assets/grades_page.jpeg)
-This is the page where the students can check their grades. The page contains a table for each semester, with the info about the courses the student has enrolled into as shown in the image above.
+*This is the page where the students can check their grades.*
+
+The page contains a table for each semester, with the info about the courses the student has enrolled into as shown in the image above.
 Please note that the website is in **Arabic**, and all the course names are in **Arabic**, I translated the site so anyone would understand the concept. So the API will send the grades in Arabic (as how you will see later) since **the website is in Arabic by default.**.
 
 ## Let me explain how to use the API <a name="how-to-use-the-api"></a>
@@ -56,7 +58,7 @@ Please note that the website is in **Arabic**, and all the course names are in *
     ```
 
     - **username** (**string**): your username (the one you use to log in to the website, however, you can use anything as a username, it will be used to identify the user in the database)
-    - **phoneNumber** (**string**): your phone number (the one you use to receive the notification). **Make sure it is in [<u>valid WhatsApp phone number format</u>](https://faq.whatsapp.com/1294841057948784).**
+    - **phoneNumber** (**string**): your phone number (the one you use to receive the notification). **Make sure it is in <a href="https://faq.whatsapp.com/1294841057948784" target="_blank"><u>valid WhatsApp phone number format</u></a>.**
     - **token** (**string**): I was lazy in the implementation of the API, so you will just need to log in to the website once and copy the token from the url. As this approach was the easiest for me to implement. (**I will explain how to get the token in the next section**)
 
 **Example call**:
@@ -102,8 +104,10 @@ https://www.scialex.org/S/your_token/Student/2018
 *Your current CGPA*: 'your_current_cgpa'
 ```
 
-- The API will regularly check the grades every **9 minutes**, and that was achieved by using cron-jobs, and if any grades had been revealed, it will send a message via SMS to the user with the revealed grades and the current CGPA. The message will look like this:
+The API will regularly check the grades every **9 minutes**, and that was achieved by using cron-jobs, and if any grades had been revealed, it will send a message via SMS to the user with the revealed grades and the current CGPA. The message will look like this:
+
 ![notification message](/assets/grades_notification.jpg)
+*Notification sent as an SMS message.*
 
 **Sometimes, you would get a response like this:**
 
@@ -160,7 +164,7 @@ Info:
 
 - **The API will also delete the user and all their info from the database.**
 
-## Key Features
+## Key Features <a name="key-features"></a>
 
 - The API supports sending notifications via SMS and WhatsApp when grades are available.
 - Users can register and unregister from the grades checking service easily.
@@ -180,7 +184,7 @@ I implemented a rate limiting feature to prevent abuse of the API. The API will 
 
 ## Hosting <a name="hosting"></a>
 
-Well, I needed to host the API somewhere, so based on my use case, I decided to use **GCP**. I used the **Google App Engine** to host the API. The API is hosted on a free tier, as the API is not very heavy and does not require a lot of resources. But if the API is used by a lot of users, I would need to upgrade the plan, and I don't think I will do that. So the solution for you would be to either:
+Well, I needed to host the API somewhere, so based on my use case, I decided to use **<a href="https://cloud.google.com/" target="_blank">GCP</a>**. I used the **<a href="https://cloud.google.com/appengine" target="_blank">Google App Engine</a>** to host the API. The API is hosted on a free tier, as the API is not very heavy and does not require a lot of resources. But if the API is used by a lot of users, I would need to upgrade the plan, and I don't think I will do that. So the solution for you would be to either:
 
 1. **Host it on your own server (if you have one).**
 2. **Use a free hosting service like Heroku, Railway or Render.**

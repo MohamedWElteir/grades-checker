@@ -18,6 +18,36 @@ async function readUserSessions() {
   }
 }
 
+async function getUserSession(username) {
+  try {
+    const session = await UserSession.findOne({ username });
+    return session;
+  } catch (error) {
+    console.error("Error getting user session from MongoDB:", error.message);
+    throw error;
+  }
+}
+
+async function saveUserSession(username, sessionData) {
+  try {
+    await UserSession.updateOne(
+      { username },
+      {
+        $set: {
+          lastKnownGrades: sessionData.lastKnownGrades,
+          notPolledCourses: sessionData.notPolledCourses,
+          CGPA: sessionData.CGPA,
+        },
+      },
+      { upsert: true }
+    );
+  } catch (error) {
+    console.error("Error saving user session to MongoDB:", error.message);
+    throw error;
+  }
+}
+
+
 async function writeUserSessions(sessions) {
   try {
     for (const username in sessions) {
@@ -43,4 +73,6 @@ async function writeUserSessions(sessions) {
 module.exports = {
   readUserSessions,
   writeUserSessions,
+  getUserSession,
+  saveUserSession,
 };
