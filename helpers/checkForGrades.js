@@ -1,4 +1,7 @@
-const { sendSMS, sendWhatsapp, sendGradesViaWhatsapp } = require("./messageSenderService");
+const {
+  sendMessage,
+  sendWhatsapp,
+} = require("./messageSenderService");
 const { extractGradesData } = require("./extractGradesData");
 const { makeGetRequest } = require("./requestsHandler");
 const { validatePage } = require("./validators");
@@ -43,10 +46,10 @@ async function checkForUpdates(user) {
     );
 
     if (newGrades.length > 0) {
-      sendSMS(phoneNumber, newGrades, extractedGradesData.CGPA).catch(
+      sendMessage(phoneNumber, newGrades, extractedGradesData.CGPA).catch(
         console.error
       );
-      sendGradesViaWhatsapp(phoneNumber, newGrades, extractedGradesData.CGPA).catch(
+      sendMessage(phoneNumber, newGrades, extractedGradesData.CGPA, 'WhatsApp').catch(
         console.error
       );
       await saveUserProcess(username, phoneNumber, extractedGradesData, token);

@@ -1,10 +1,8 @@
-const dotenv = require("dotenv");
-const connectDB = require("./db");
+const connectDB = require("../data/db");
 const {
   getUserSession,
   saveUserSession,
 } = require("./userSessionsHandler");
-dotenv.config();
 
 connectDB();
 
@@ -30,7 +28,7 @@ async function extractGradesData($, username) {
     const numberOfTables = tables.length;
 
     if (numberOfTables === 0)
-      console.error("No grade tables found in the HTML content.");
+      throw new Error("No grade tables found in the HTML content.");
 
     const lastTableIndex = numberOfTables - 1;
     const gridViewId = `${labelPrefix}_GridView1_${lastTableIndex}`; // Most recent courses table
@@ -38,7 +36,8 @@ async function extractGradesData($, username) {
     const CGPA = $(`#${formViewId}`).text().trim();
     const tableElement = $(`#${gridViewId}`);
     if (tableElement.length === 0)
-      console.warn(`Table with id '${gridViewId}' not found.`);
+      throw new Error(`Table with id '${gridViewId}' not found.`);
+    
     const records = processTableElement(tableElement);
     for (const record of records) {
       const parsedRow = parseRecord(record, resultsProcessor);
