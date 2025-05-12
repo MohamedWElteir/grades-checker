@@ -180,7 +180,10 @@ I implemented a rate limiting feature to prevent abuse of the API. The API will 
 ## System Overview <a name="system-overview"></a>
 
 ![Folders](./assets/system-overview-folders.svg)
+*Component Diagram*
+
 ![UML](./assets/system-overview-uml.svg)
+*Call Flow Diagram*
 
 ## Hosting <a name="hosting"></a>
 
