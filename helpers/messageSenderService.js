@@ -6,7 +6,7 @@ const twilioClient = twilio(
   process.env.TWILIO_AUTH_TOKEN
 );
 
-async function sendSMS(to, grades, CGPA) {
+async function sendMessage(to, grades, CGPA , senderMethod = 'SMS') {
   let messageBody = grades
     .map(
       (grade) =>
@@ -17,36 +17,18 @@ async function sendSMS(to, grades, CGPA) {
   try {
     const message = await twilioClient.messages.create({
       body: `New grades available:\n${messageBody}`,
-      from: process.env.TWILIO_PHONE_NUMBER,
+      from:
+        senderMethod.toLowerCase() === "whatsapp"
+          ? process.env.TWILIO_WHATSAPP_PHONE_NUMBER
+          : process.env.TWILIO_PHONE_NUMBER,
       to: to,
     });
-    console.log(`SMS sent to ${to}: ${message.sid}`);
+    console.log(`Message sent to ${to} via ${senderMethod}: ${message.sid}`);
   } catch (error) {
-    console.error(`Failed to send SMS to ${to}:`, error);
+    console.error(`Failed to send message to ${to} via ${senderMethod}:`, error);
   }
 }
 
-
-
-async function sendGradesViaWhatsapp(to, grades, CGPA) {
-  let messageBody = grades
-    .map(
-      (grade) =>
-        `Course: ${grade.courseName}\nGrade: ${grade.grade}`
-    )
-    .join("\n");
-    messageBody += `\n*CGPA:* ${CGPA}`;
-  try {
-    const message = await twilioClient.messages.create({
-      body: `New grades available:\n${messageBody}`,
-      from: process.env.TWILIO_WHATSAPP_PHONE_NUMBER,
-      to: `whatsapp:${to}`,
-    });
-    console.log(`WhatsApp message sent to ${to}: ${message.sid}`);
-  } catch (error) {
-    console.error(`Failed to send WhatsApp message to ${to}:`, error);
-  }
-}
 
 
 async function sendWhatsapp(to, messageParams) {
@@ -66,7 +48,6 @@ async function sendWhatsapp(to, messageParams) {
 }
 
 module.exports = {
-  sendSMS,
-  sendGradesViaWhatsapp,
+  sendMessage,
   sendWhatsapp,
 };
