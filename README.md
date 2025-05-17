@@ -199,5 +199,5 @@ Well, I needed to host the API somewhere, so based on my use case, I decided to 
 
 In the end, this is a script I did for fun and because I am lazy and I don't want to check my grades every time. **I am not responsible for any damage caused by the use of this script. Use it at your own risk.** I hope you find it useful.
 
-## Contributing <a name="contrbuting"></a>
+## Contributing <a name="contributing"></a>
 If you have any new idea or suggestion that would add to the project, feel free to create a pull request with your additions!
