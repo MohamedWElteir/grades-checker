@@ -4,6 +4,9 @@
  ***********************************************************
  */
 
+ // As of May 18 2025, the website changed the way it sends the request. 
+ // The _RequestVerificationToken is now randomly generated and is not static anymore.
+
 const axios = require("axios");
 const { pageToHTML } = require("./htmlProcessor");
 async function makeGetRequest(token, type = "text") {
