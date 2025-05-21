@@ -2,16 +2,17 @@ const UserSession = require("../data/userSessionSchema");
 
 async function readUserSessions() {
   try {
-    const userSessions = await UserSession.find();
-    const sessions = {};
-    userSessions.forEach((session) => {
+    const userSessions = await UserSession
+      .find({}, 'username lastKnownGrades notPolledCourses CGPA')
+      .lean();
+    return userSessions.reduce((sessions, session) => {
       sessions[session.username] = {
         lastKnownGrades: session.lastKnownGrades,
         notPolledCourses: session.notPolledCourses,
         CGPA: session.CGPA,
       };
-    });
-    return sessions;
+      return sessions;
+    }, {});
   } catch (error) {
     console.error("Error reading user sessions from MongoDB:", error.message);
     throw error;
