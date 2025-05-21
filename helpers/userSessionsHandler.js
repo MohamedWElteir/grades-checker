@@ -50,19 +50,21 @@ async function saveUserSession(username, sessionData) {
 
 async function writeUserSessions(sessions) {
   try {
-    for (const username in sessions) {
-      const session = sessions[username];
-      await UserSession.updateOne(
-        { username },
-        {
+    const bulkOps = Object.entries(sessions).map(([username, session]) => ({
+      updateOne: {
+        filter: { username },
+        update: {
           $set: {
             lastKnownGrades: session.lastKnownGrades,
             notPolledCourses: session.notPolledCourses,
             CGPA: session.CGPA,
           },
         },
-        { upsert: true }
-      );
+        upsert: true,
+      }
+    }));
+    if (bulkOps.length > 0) {
+      await UserSession.bulkWrite(bulkOps);
     }
   } catch (error) {
     console.error("Error writing user sessions to MongoDB:", error.message);
