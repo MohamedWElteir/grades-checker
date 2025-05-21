@@ -23,9 +23,9 @@ async function sendMessage(to, grades, CGPA , senderMethod = 'SMS') {
           : process.env.TWILIO_PHONE_NUMBER,
       to: to,
     });
-    console.log(`Message sent to ${to} via ${senderMethod}: ${message.sid}`);
+    console.log(`Message sent to ${to} via ${senderMethod.toLowerCase() === "whatsapp" ? "WhatsApp" : "SMS"}: ${message.sid}`);
   } catch (error) {
-    console.error(`Failed to send message to ${to} via ${senderMethod}:`, error);
+    console.error(`Failed to send message to ${to} via ${senderMethod.toLowerCase() === "whatsapp" ? "WhatsApp" : "SMS"}:`, error);
   }
 }
 
