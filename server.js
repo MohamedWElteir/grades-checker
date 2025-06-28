@@ -187,7 +187,7 @@ app.delete(
     try {
       const stopped = await stopBackgroundProcess(username);
       stopped
-        ? res.json({
+        ? res.status(204).json({
             message: `Grade checking service stopped for user: ${username}`,
           })
         : res.status(404).json({
