@@ -147,7 +147,7 @@ DELETE /stop HTTP/1.1
  **Returns**:
 
 ```json
-200 Ok
+204 No Content
 {
  "message": "Grade checking service stopped for user {username}."
 }
