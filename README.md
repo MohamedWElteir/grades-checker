@@ -195,6 +195,26 @@ Well, I needed to host the API somewhere, so based on my use case, I decided to 
 3. **Use a container service like Docker and host it on your own machine (which I highly recommend).**
 4. **Use a cloud service like AWS or Azure (which I don't recommend as it is expensive).**
 
+If you want to host it on your own server, you can just clone the repository using the following command:
+
+```bash
+git clone https://github.com/MohamedWElteir/grades-checker.git
+```
+
+Then, navigate to the project directory and install the dependencies:
+
+```bash
+npm install
+```
+
+Then, you can run the API using the following command:
+
+```bash
+npm start
+```
+
+Make sure you have the environment variables set up correctly. You can find the environment variables in the `.env.example` file. Just copy the file and rename it to `.env`, then fill in the required values.
+
 ## Final words <a name="final-words"></a>
 
 In the end, this is a script I did for fun and because I am lazy and I don't want to check my grades every time. **I am not responsible for any damage caused by the use of this script. Use it at your own risk.** I hope you find it useful.
