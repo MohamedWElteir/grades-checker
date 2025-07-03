@@ -71,7 +71,6 @@ async function checkForUpdates(user) {
 }
 async function startBackgroundProcess(username, phoneNumber, token) {
 
-  if (!/^\+201[0125]\d{8}$/.test(phoneNumber)) return { status: 400, message: "Invalid phone number format. Use +201XXXXXXXXX" };
   if (await getUserProcess(username)) return { status: 400, message: "User already has an active process" };
   if (await isTokenInUse(token)) return { status: 400, message: "Token already in use" };
 
