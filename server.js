@@ -188,7 +188,7 @@ app.delete(
       const stopped = await stopBackgroundProcess(username);
       stopped
         ? res.status(204).json({
-            message: `Grade checking service stopped for user: ${username}`,
+            message: `Grade checking service ended for user: ${username}`,
           })
         : res.status(404).json({
             error: "No active process for this user",
@@ -196,7 +196,7 @@ app.delete(
     } catch (error) {
       console.error(error);
       res.status(500).json({
-        error: "An error occurred while stopping the background process.",
+        error: "An error occurred while ending the background process.",
       });
     }
   }
