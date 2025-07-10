@@ -6,7 +6,7 @@ const twilioClient = twilio(
   process.env.TWILIO_AUTH_TOKEN
 );
 
-async function sendMessage(to, grades, CGPA , senderMethod = 'SMS') {
+async function sendMessage(to, grades, CGPA , notificationChannel = 'SMS') {
   let messageBody = grades
     .map(
       (grade) =>
@@ -18,14 +18,14 @@ async function sendMessage(to, grades, CGPA , senderMethod = 'SMS') {
     const message = await twilioClient.messages.create({
       body: `New grades available:\n${messageBody}`,
       from:
-        senderMethod.toLowerCase() === "whatsapp"
+        notificationChannel.toLowerCase() === "whatsapp"
           ? process.env.TWILIO_WHATSAPP_PHONE_NUMBER
           : process.env.TWILIO_PHONE_NUMBER,
       to: to,
     });
-    console.log(`Message sent to ${to} via ${senderMethod.toLowerCase() === "whatsapp" ? "WhatsApp" : "SMS"}: ${message.sid}`);
+    console.log(`Message sent to ${to} via ${notificationChannel.toLowerCase() === "whatsapp" ? "WhatsApp" : "SMS"}: ${message.sid}`);
   } catch (error) {
-    console.error(`Failed to send message to ${to} via ${senderMethod.toLowerCase() === "whatsapp" ? "WhatsApp" : "SMS"}:`, error);
+    console.error(`Failed to send message to ${to} via ${notificationChannel.toLowerCase() === "whatsapp" ? "WhatsApp" : "SMS"}:`, error);
   }
 }
 

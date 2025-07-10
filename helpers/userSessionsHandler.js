@@ -1,8 +1,8 @@
-const UserSession = require("../data/userSessionSchema");
+const userSessionHandler = require("../data/userSessionSchema");
 
 async function readUserSessions() {
   try {
-    const userSessions = await UserSession
+    const userSessions = await userSessionHandler
       .find({}, 'username lastKnownGrades notPolledCourses CGPA')
       .lean();
     return userSessions.reduce((sessions, session) => {
@@ -21,7 +21,7 @@ async function readUserSessions() {
 
 async function getUserSession(username) {
   try {
-    const session = await UserSession.findOne({ username });
+    const session = await userSessionHandler.findOne({ username });
     return session;
   } catch (error) {
     console.error("Error getting user session from MongoDB:", error.message);
@@ -31,7 +31,7 @@ async function getUserSession(username) {
 
 async function saveUserSession(username, sessionData) {
   try {
-    await UserSession.updateOne(
+    await userSessionHandler.updateOne(
       { username },
       {
         $set: {
@@ -65,7 +65,7 @@ async function writeUserSessions(sessions) {
       }
     }));
     if (bulkOps.length > 0) {
-      await UserSession.bulkWrite(bulkOps);
+      await userSessionHandler.bulkWrite(bulkOps);
     }
   } catch (error) {
     console.error("Error writing user sessions to MongoDB:", error.message);
