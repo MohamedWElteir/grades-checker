@@ -3,3 +3,6 @@
 /coverage
 .cph
 .qodo
+.vscode-test
+.hintrc
+.vscode

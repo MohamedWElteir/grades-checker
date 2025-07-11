@@ -23,7 +23,7 @@ describe("validateFields middleware", () => {
 
   it("should call next if all fields are present and valid", () => {
     const req = { body: { username: "test", phoneNumber: "+20123456789" } };
-    const res = {};
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
     const next = jest.fn();
 
     validateFields(["username", "phoneNumber"])(req, res, next);

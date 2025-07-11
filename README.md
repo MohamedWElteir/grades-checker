@@ -148,9 +148,6 @@ DELETE /stop HTTP/1.1
 
 ```json
 204 No Content
-{
- "message": "Grade checking service stopped for user {username}."
-}
 ```
 
 - The API will stop checking the grades and will send a message to the user with some info about how many minutes he had subscribed to the service with the start and end times. The message would look like this:
@@ -220,4 +217,5 @@ Make sure you have the environment variables set up correctly. You can find the 
 In the end, this is a script I did for fun and because I am lazy and I don't want to check my grades every time. **I am not responsible for any damage caused by the use of this script. Use it at your own risk.** I hope you find it useful.
 
 ## Contributing <a name="contributing"></a>
+
 If you have any new idea or suggestion that would add to the project, feel free to create a pull request with your additions!
