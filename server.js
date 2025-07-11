@@ -70,7 +70,7 @@ try{
     cachedDocs = `
       <html>
         <head>
-          <title>API Documentation</title>
+          <title>Grades Checker API Documentation</title>
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
             body {
@@ -187,9 +187,7 @@ app.delete(
     try {
       const stopped = await stopBackgroundProcess(username);
       stopped
-        ? res.status(204).json({
-            message: `Grade checking service ended for user: ${username}`,
-          })
+        ? res.sendStatus(204)
         : res.status(404).json({
             error: "No active process for this user",
           });
@@ -202,6 +200,9 @@ app.delete(
   }
 );
 
-app.listen(PORT, () => {
-  console.log(`Listening on port: ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Listening on port: ${PORT}`);
+  });
+}
+module.exports = app; 
