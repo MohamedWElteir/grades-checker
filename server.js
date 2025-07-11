@@ -202,6 +202,9 @@ app.delete(
   }
 );
 
-app.listen(PORT, () => {
-  console.log(`Listening on port: ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Listening on port: ${PORT}`);
+  });
+}
+module.exports = app; 
