@@ -30,7 +30,7 @@ async function deleteAllUserInstance(username) {
 }
 
 async function isTokenInUse(token) {
-  const user = await UserProcess.findOne({ token });
+  const user = await UserProcess.findOne({ token: { $eq: token } });
   return !!user;
 }
 
