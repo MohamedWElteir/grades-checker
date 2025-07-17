@@ -21,7 +21,7 @@ async function readUserSessions() {
 
 async function getUserSession(username) {
   try {
-    const session = await userSessionHandler.findOne({ username });
+    const session = await userSessionHandler.findOne({ username: { $eq: username } });
     return session;
   } catch (error) {
     console.error("Error getting user session from MongoDB:", error.message);
@@ -32,7 +32,7 @@ async function getUserSession(username) {
 async function saveUserSession(username, sessionData) {
   try {
     await userSessionHandler.updateOne(
-      { username },
+      { username: { $eq: username } },
       {
         $set: {
           lastKnownGrades: sessionData.lastKnownGrades,
@@ -53,7 +53,7 @@ async function writeUserSessions(sessions) {
   try {
     const bulkOps = Object.entries(sessions).map(([username, session]) => ({
       updateOne: {
-        filter: { username },
+        filter: { username: { $eq: username } },
         update: {
           $set: {
             lastKnownGrades: session.lastKnownGrades,
