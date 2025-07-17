@@ -107,7 +107,8 @@ async function startBackgroundProcess(username, phoneNumber, token) {
     return { status: 201, message: "Grade checking service started" };
   } catch (error) {
     console.error(
-      `Error starting background process for ${username}:`,
+      "Error starting background process for %s:",
+      username,
       error.message
     );
     return { status: 500, message: `Internal error: ${error.message}` };
