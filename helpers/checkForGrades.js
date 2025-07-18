@@ -131,7 +131,7 @@ async function stopBackgroundProcess(username) {
     startTime: formatDate(processInfo.startTime),
     endTime: formatDate(new Date()),
   };
-  console.log(`Process statistics for ${username}:`, info);
+  console.log("Process statistics for %s:", username, info);
 
   await deleteAllUserInstance(username);
   sendWhatsapp(
