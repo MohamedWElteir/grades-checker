@@ -43,7 +43,7 @@ async function sendWhatsapp(to, messageParams) {
     });
     console.log(`WhatsApp message sent to ${to}: ${message.sid}`);
   } catch (error) {
-    console.error(`Failed to send WhatsApp message to ${to}:`, error);
+    console.error("Failed to send WhatsApp message to %s:", to, error);
   }
 }
 
