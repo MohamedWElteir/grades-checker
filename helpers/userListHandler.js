@@ -13,15 +13,15 @@ async function getAllActiveProcesses() {
 }
 
 async function getUserProcess(username) {
-  return await UserProcess.findOne({ username });
+  return await UserProcess.findOne({ username: { $eq: username } });
 }
 
 async function deleteUserProcess(username) {
-  return await UserProcess.deleteOne({ username });
+  return await UserProcess.deleteOne({ username: { $eq: username } });
 }
 
 async function deleteUserSession(username) {
-  return await UserSchema.deleteOne({ username });
+  return await UserSchema.deleteOne({ username: { $eq: username } });
 }
 
 async function deleteAllUserInstance(username) {
