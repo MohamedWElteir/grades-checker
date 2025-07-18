@@ -4,9 +4,25 @@ async function saveUserProcess(username, phoneNumber, lastGradesData, token) {
   if (typeof username !== "string") {
     throw new Error("Invalid username: must be a string.");
   }
+  if (typeof phoneNumber !== "string") {
+    throw new Error("Invalid phoneNumber: must be a string.");
+  }
+  if (typeof token !== "string") {
+    throw new Error("Invalid token: must be a string.");
+  }
+  if (typeof lastGradesData !== "object" || lastGradesData === null) {
+    throw new Error("Invalid lastGradesData: must be a non-null object.");
+  }
   await UserProcess.findOneAndUpdate(
     { username: { $eq: username } },
-    { phoneNumber, startTime: new Date(), lastGradesData, token },
+    {
+      $set: {
+        phoneNumber,
+        startTime: new Date(),
+        lastGradesData,
+        token,
+      },
+    },
     { upsert: true }
   );
 }
