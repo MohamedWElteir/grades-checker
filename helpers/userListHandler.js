@@ -1,8 +1,11 @@
 const UserProcess = require("../data/userSchema");
 const UserSchema = require("../data/userSessionSchema");
 async function saveUserProcess(username, phoneNumber, lastGradesData, token) {
+  if (typeof username !== "string") {
+    throw new Error("Invalid username: must be a string.");
+  }
   await UserProcess.findOneAndUpdate(
-    { username },
+    { username: { $eq: username } },
     { phoneNumber, startTime: new Date(), lastGradesData, token },
     { upsert: true }
   );
