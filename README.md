@@ -169,7 +169,7 @@ Info:
 - The API checks the grades every **9 minutes** and sends notifications when grades are available.
 - The API will tell the user if there are any courses that are not polled yet (استبيان) so they can go and fill the survey for the course.
 - The API will also send a message to the user if the token expires and the user would need to log in again and get a new token.
-- The API will also notify users when their grades are available via **SMS** and **WhatsApp**.
+- The API will also notify users when they unsubscribe from the service and send them some useful information about the duration for which they have been subscribed.
 
 ## Additional Features
 
