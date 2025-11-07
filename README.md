@@ -1,5 +1,5 @@
 # Grades Checker And Notifier API*
-
+[![wakatime](https://wakatime.com/badge/github/MohamedWElteir/grades-checker.svg)](https://wakatime.com/badge/github/MohamedWElteir/grades-checker)
 ## "Disclaimer"
 
 ****The author of this script is not responsible for any damage caused by the use of this script. Use it at your own risk.***
