@@ -16,7 +16,7 @@
     "express-rate-limit": "^7.5.0",
     "grades-checker": "file:",
     "marked": "^15.0.8",
-    "mongoose": "^8.9.5",
+    "mongoose": "^8.24.1",
     "node-cron": "^3.0.3",
     "twilio": "^5.4.2"
   },
