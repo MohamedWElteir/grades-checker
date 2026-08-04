@@ -4,10 +4,11 @@
  ***********************************************************
  */
 
- // As of May 18 2025, the _RequestVerificationToken is now randomly generated and is not static anymore.
+// As of May 18 2025, the _RequestVerificationToken is now randomly generated and is not static anymore.
 
 const axios = require("axios");
 const { pageToHTML } = require("./htmlProcessor");
+const { validateToken } = require("./validators");
 async function makeGetRequest(token, type = "text") {
   /**
    * Make a get request to the student result page
@@ -15,6 +16,9 @@ async function makeGetRequest(token, type = "text") {
    * @param {string} type - The type of response to return. Default is text
    */
   try {
+    if (!validateToken(token)) {
+      throw new Error("Invalid token provided.");
+    }
     const url = `https://www.scialex.org/F/${token}/2018/Student/Results.aspx`;
 
     const response = await axios({
